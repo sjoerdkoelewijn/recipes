@@ -24,12 +24,6 @@
     "baseWeightGrams": 1178
   },
   {
-    "slug": "example-pancakes",
-    "title": "Pancakes",
-    "image": "",
-    "baseWeightGrams": 250
-  },
-  {
     "slug": "pavlova",
     "title": "Pavlova",
     "image": "images/pavlova.jpg",
