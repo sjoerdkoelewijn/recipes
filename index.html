@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
@@ -131,6 +131,13 @@
 
 <template id="tpl-form">
   <form id="recipeForm" class="recipe-form">
+    <div id="importBlock" class="import-block">
+      <label class="secondarybtn small" for="f-import">Importeer .md</label>
+      <input id="f-import" type="file" accept=".md,text/markdown,text/plain" hidden>
+      <button type="button" id="downloadExampleBtn" class="secondarybtn small">Voorbeeld .md downloaden</button>
+      <p class="hint">Optioneel: laad een .md-bestand in om de velden te vullen. Je kunt daarna alles nog aanpassen voordat je opslaat.</p>
+    </div>
+
     <label class="field">
       <span>Titel</span>
       <input id="f-title" type="text" required>
@@ -191,6 +198,6 @@
   </form>
 </template>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

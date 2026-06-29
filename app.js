@@ -116,6 +116,35 @@ function serializeRecipe(r){
 const ALL_TAGS = ['hartig', 'zoet'];
 function tagLabel(t){ return t.charAt(0).toUpperCase() + t.slice(1); }
 
+/* A sample recipe used for the downloadable .md template. Serialized with the
+   same serializeRecipe() the app writes with, so the example always matches
+   the current schema. Supported units: g, kg, ml, l, tsp, tbsp, cup, pcs. */
+const EXAMPLE_RECIPE = {
+  title: 'Voorbeeldrecept',
+  image: 'images/voorbeeldrecept.jpg',
+  tags: ['zoet'],
+  ingredients: [
+    { id: 'bloem', name: 'Bloem', amount: 250, unit: 'g' },
+    { id: 'melk', name: 'Melk', amount: 400, unit: 'ml' },
+    { id: 'eieren', name: 'Eieren', amount: 2, unit: 'pcs' },
+    { id: 'zout', name: 'Zout', amount: 0.25, unit: 'tsp' }
+  ],
+  steps: [
+    'Klop {bloem} en {zout} samen in een kom.',
+    'Voeg geleidelijk {melk} toe tot een glad beslag.',
+    'Klop de {eieren} erdoor.',
+    'Bak in een hete, ingevette pan tot beide kanten goudbruin zijn.'
+  ]
+};
+function downloadText(filename, text){
+  const blob = new Blob([text], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
 /* ---------- Scaling ---------- */
 const WEIGHT_UNITS = { g: 1, kg: 1000 };
 function computeBaseWeight(ingredients){
@@ -462,6 +491,7 @@ async function renderForm(editSlug){
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'tag-chip' + (selectedTags.has(tag) ? ' selected' : '');
+    chip.dataset.tag = tag;
     chip.textContent = tagLabel(tag);
     chip.setAttribute('aria-pressed', selectedTags.has(tag) ? 'true' : 'false');
     chip.addEventListener('click', () => {
@@ -569,6 +599,49 @@ async function renderForm(editSlug){
 
   document.getElementById('addIngredientBtn').addEventListener('click', () => addIngredientRow());
   document.getElementById('addStepBtn').addEventListener('click', () => addStepRow());
+
+  // Fill every form field from a parsed recipe (used by the .md import).
+  function populateFromRecipe(r){
+    document.getElementById('f-title').value = r.title || '';
+    selectedTags.clear();
+    (r.tags || []).forEach(t => selectedTags.add(t));
+    tagChipsEl.querySelectorAll('.tag-chip').forEach(chip => {
+      const on = selectedTags.has(chip.dataset.tag);
+      chip.classList.toggle('selected', on);
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    rowsEl.innerHTML = '';
+    (r.ingredients && r.ingredients.length ? r.ingredients : [undefined]).forEach(addIngredientRow);
+    stepsEl.innerHTML = '';
+    (r.steps && r.steps.length ? r.steps : ['']).forEach(addStepRow);
+    refreshChips();
+  }
+
+  // Import .md / download example — only offered when creating a new recipe.
+  const importBlock = document.getElementById('importBlock');
+  if(editSlug){
+    importBlock.hidden = true;
+  } else {
+    document.getElementById('downloadExampleBtn').addEventListener('click', () => {
+      downloadText('voorbeeld-recept.md', serializeRecipe(EXAMPLE_RECIPE));
+    });
+    document.getElementById('f-import').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const status = document.getElementById('formStatus');
+      status.hidden = false;
+      try{
+        const recipe = parseRecipe(await file.text());
+        populateFromRecipe(recipe);
+        status.className = 'form-status success';
+        status.textContent = 'Recept ingeladen — controleer de velden en sla op.';
+      }catch(err){
+        status.className = 'form-status error';
+        status.textContent = 'Kon dit .md-bestand niet lezen: ' + err.message;
+      }
+      e.target.value = '';  // allow re-importing the same file
+    });
+  }
 
   document.getElementById('recipeForm').addEventListener('submit', async (e) => {
     e.preventDefault();

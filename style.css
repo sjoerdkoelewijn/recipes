@@ -206,6 +206,14 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 }
 .image-preview{width:100%; max-height:220px; object-fit:cover; border-radius:var(--r-sm); margin-top:6px;}
 
+.import-block{
+  display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-sm);
+  padding:var(--sp-md); border:1px dashed var(--border-strong); border-radius:var(--r-md);
+  background:var(--surface-soft);
+}
+.import-block .secondarybtn.small{margin:0;}
+.import-block .hint{flex-basis:100%; margin:0;}
+
 .ingredient-rows, .step-rows{display:flex; flex-direction:column; gap:var(--sp-sm);}
 .ingredient-row{display:grid; grid-template-columns:1fr 64px 76px 32px; gap:6px; align-items:center;}
 .ingredient-row input, .ingredient-row select{
