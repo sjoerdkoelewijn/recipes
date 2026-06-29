@@ -1,8 +1,23 @@
 /* ---------- Config ---------- */
 const CONFIG_KEY = 'recipeAppConfig';
+// Public repo the app reads recipes from by default. Browsing is anonymous
+// (the repo is public), so no token is needed just to view recipes. A token
+// is only required to add/edit/delete, and is supplied via Settings.
+const DEFAULT_REPO = { owner: 'sjoerdkoelewijn', repo: 'recipes', branch: 'main' };
 function getConfig(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)) || null; }catch(e){ return null; } }
 function setConfig(cfg){ localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
-function configReady(){ const c = getConfig(); return !!(c && c.owner && c.repo && c.token); }
+// Effective repo settings: any stored overrides layered on the public defaults.
+function repoCfg(){
+  const c = getConfig() || {};
+  return {
+    owner: c.owner || DEFAULT_REPO.owner,
+    repo: c.repo || DEFAULT_REPO.repo,
+    branch: c.branch || DEFAULT_REPO.branch,
+    token: c.token || ''
+  };
+}
+// Adding or editing recipes (write access) requires a personal access token.
+function canEdit(){ return !!repoCfg().token; }
 
 /* ---------- base64 helpers (UTF-8 safe) ---------- */
 function b64EncodeUnicode(str){
@@ -14,16 +29,16 @@ function b64DecodeUnicode(str){
 
 /* ---------- GitHub API ---------- */
 const gh = {
-  apiBase(){ const c = getConfig(); return `https://api.github.com/repos/${c.owner}/${c.repo}`; },
+  apiBase(){ const c = repoCfg(); return `https://api.github.com/repos/${c.owner}/${c.repo}`; },
   headers(json=true){
-    const c = getConfig();
+    const c = repoCfg();
     const h = { 'Accept': 'application/vnd.github+json' };
     if(c && c.token) h['Authorization'] = `Bearer ${c.token}`;
     if(json) h['Content-Type'] = 'application/json';
     return h;
   },
   async getFile(path){
-    const c = getConfig();
+    const c = repoCfg();
     const res = await fetch(`${this.apiBase()}/contents/${path}?ref=${c.branch||'main'}`, { headers: this.headers(false) });
     if(res.status === 404) return null;
     if(!res.ok) throw new Error(`GitHub read failed (${res.status})`);
@@ -31,7 +46,7 @@ const gh = {
     return { sha: data.sha, text: b64DecodeUnicode(data.content.replace(/\n/g,'')) };
   },
   async putFile(path, text, message, sha){
-    const c = getConfig();
+    const c = repoCfg();
     const body = { message, content: b64EncodeUnicode(text), branch: c.branch||'main' };
     if(sha) body.sha = sha;
     const res = await fetch(`${this.apiBase()}/contents/${path}`, {
@@ -41,7 +56,7 @@ const gh = {
     return res.json();
   },
   async putImage(path, base64Data, message, sha){
-    const c = getConfig();
+    const c = repoCfg();
     const body = { message, content: base64Data, branch: c.branch||'main' };
     if(sha) body.sha = sha;
     const res = await fetch(`${this.apiBase()}/contents/${path}`, {
@@ -51,7 +66,7 @@ const gh = {
     return res.json();
   },
   async deleteFile(path, message, sha){
-    const c = getConfig();
+    const c = repoCfg();
     const res = await fetch(`${this.apiBase()}/contents/${path}`, {
       method: 'DELETE', headers: this.headers(true), body: JSON.stringify({ message, sha, branch: c.branch||'main' })
     });
@@ -177,7 +192,10 @@ function setChrome({ title, showBack, showAdd }){
 
 async function render(){
   const hash = location.hash || '#/';
-  if(!configReady() && hash !== '#/settings'){ location.hash = '#/settings'; return; }
+  // Viewing is open to everyone. Only the write routes need a token; bounce
+  // those to Settings so the user can paste one before adding/editing.
+  const needsToken = hash === '#/new' || /^#\/edit\//.test(hash);
+  if(needsToken && !canEdit()){ location.hash = '#/settings'; return; }
 
   if(hash === '#/' ) return renderList();
   if(hash === '#/settings') return renderSettings();
@@ -189,7 +207,7 @@ async function render(){
 
 /* ---------- List view ---------- */
 async function renderList(){
-  setChrome({ title: 'Kookboek', showBack: false, showAdd: true });
+  setChrome({ title: 'Kookboek', showBack: false, showAdd: canEdit() });
   appEl.innerHTML = document.getElementById('tpl-list').innerHTML;
   const grid = document.getElementById('cardGrid');
   const empty = document.getElementById('emptyState');
@@ -214,7 +232,7 @@ async function renderList(){
       const a = node.querySelector('a');
       a.href = `#/r/${encodeURIComponent(entry.slug)}`;
       const img = node.querySelector('img');
-      if(entry.image){ img.src = `https://raw.githubusercontent.com/${getConfig().owner}/${getConfig().repo}/${getConfig().branch||'main'}/recipes/${entry.image}`; }
+      if(entry.image){ const c = repoCfg(); img.src = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${c.branch}/recipes/${entry.image}`; }
       node.querySelector('h3').textContent = entry.title;
       node.querySelector('.weight-pill').textContent = `${entry.baseWeightGrams} g`;
       grid.appendChild(node);
@@ -244,7 +262,8 @@ async function renderDetail(slug){
   document.getElementById('detailTitle').textContent = recipe.title;
   const img = appEl.querySelector('.detail-photo img');
   if(recipe.image){
-    img.src = `https://raw.githubusercontent.com/${getConfig().owner}/${getConfig().repo}/${getConfig().branch||'main'}/recipes/${recipe.image}`;
+    const c = repoCfg();
+    img.src = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${c.branch}/recipes/${recipe.image}`;
   } else {
     appEl.querySelector('.detail-photo').style.display = 'none';
   }
@@ -284,7 +303,9 @@ async function renderDetail(slug){
     });
   });
   document.getElementById('resetScaleBtn').addEventListener('click', () => { weightInput.value = baseWeight; draw(); });
-  document.getElementById('editBtn').addEventListener('click', () => { location.hash = `#/edit/${encodeURIComponent(slug)}`; });
+  const editBtn = document.getElementById('editBtn');
+  editBtn.hidden = !canEdit();
+  editBtn.addEventListener('click', () => { location.hash = `#/edit/${encodeURIComponent(slug)}`; });
 }
 
 /* ---------- Form view (new / edit) ---------- */
@@ -303,7 +324,8 @@ async function renderForm(editSlug){
   let imageBase64 = null, imageChanged = false;
   if(existing && existing.image){
     const prev = document.getElementById('f-imagePreview');
-    prev.src = `https://raw.githubusercontent.com/${getConfig().owner}/${getConfig().repo}/${getConfig().branch||'main'}/recipes/${existing.image}`;
+    const c = repoCfg();
+    prev.src = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${c.branch}/recipes/${existing.image}`;
     prev.hidden = false;
   }
   document.getElementById('f-image').addEventListener('change', async (e) => {
@@ -454,12 +476,14 @@ async function renderForm(editSlug){
 
 /* ---------- Settings view ---------- */
 function renderSettings(){
-  setChrome({ title: 'Settings', showBack: configReady(), showAdd: false });
+  setChrome({ title: 'Settings', showBack: true, showAdd: false });
   appEl.innerHTML = document.getElementById('tpl-settings').innerHTML;
   const cfg = getConfig() || {};
-  document.getElementById('s-owner').value = cfg.owner || '';
-  document.getElementById('s-repo').value = cfg.repo || '';
-  document.getElementById('s-branch').value = cfg.branch || 'main';
+  // Pre-fill repo fields with the public defaults so a contributor normally
+  // only needs to paste a token to unlock editing.
+  document.getElementById('s-owner').value = cfg.owner || DEFAULT_REPO.owner;
+  document.getElementById('s-repo').value = cfg.repo || DEFAULT_REPO.repo;
+  document.getElementById('s-branch').value = cfg.branch || DEFAULT_REPO.branch;
   document.getElementById('s-token').value = cfg.token || '';
 
   document.getElementById('settingsForm').addEventListener('submit', (e) => {
