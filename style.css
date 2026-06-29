@@ -26,6 +26,9 @@
 }
 
 *{box-sizing:border-box;}
+/* Keep the `hidden` attribute authoritative even when an element sets its own
+   display (e.g. .iconbtn uses display:flex, which would otherwise show it). */
+[hidden]{display:none !important;}
 html,body{margin:0;padding:0;}
 body{
   background:var(--canvas);
