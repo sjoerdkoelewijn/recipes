@@ -518,7 +518,9 @@ async function renderForm(editSlug){
     chipsEl.innerHTML = '';
     ings.forEach(i => {
       const chip = document.createElement('button');
-      chip.type = 'button'; chip.className = 'chip'; chip.textContent = `{${i.id}}`;
+      // Show the ingredient name, but insert the stable {id} into the step.
+      chip.type = 'button'; chip.className = 'chip'; chip.textContent = i.name;
+      chip.title = `Voegt {${i.id}} in`;
       chip.addEventListener('click', () => {
         const ta = lastFocusedStep || stepsEl.querySelector('textarea');
         if(!ta) return;
