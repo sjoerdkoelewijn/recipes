@@ -318,7 +318,14 @@ async function renderList(){
       if(entry.image){ const c = repoCfg(); img.src = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${c.branch}/recipes/${entry.image}`; }
       else { img.src = FALLBACK_IMG; }
       node.querySelector('h3').textContent = entry.title;
-      node.querySelector('.weight-pill').textContent = `${entry.baseWeightGrams} g`;
+      // Show up to the 3 most important tags (list order = priority).
+      const tagsEl = node.querySelector('.card-tags');
+      (entry.tags || []).slice(0, 3).forEach(t => {
+        const pill = document.createElement('span');
+        pill.className = 'card-tag';
+        pill.textContent = tagLabel(t);
+        tagsEl.appendChild(pill);
+      });
       grid.appendChild(node);
     });
   }

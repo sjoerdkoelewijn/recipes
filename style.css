@@ -91,8 +91,11 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 .card-img{width:72px; height:72px; border-radius:var(--r-md); overflow:hidden; flex-shrink:0; background:var(--surface-strong);}
 .card-img img{width:100%; height:100%; object-fit:cover; display:block;}
 .card-body h3{font-size:16px; font-weight:600; line-height:1.25; margin-bottom:6px;}
-.weight-pill{
-  font-size:14px; font-weight:400; line-height:1.43; color:var(--muted);
+.card-tags{display:flex; flex-wrap:wrap; gap:6px;}
+.card-tag{
+  font-size:12px; font-weight:500; line-height:1; color:var(--muted);
+  background:var(--surface-soft); border:1px solid var(--hairline);
+  border-radius:var(--r-full); padding:4px 10px;
 }
 
 .empty{text-align:center; color:var(--muted); margin-top:40px; font-size:14px;}
