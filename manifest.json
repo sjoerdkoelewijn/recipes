@@ -1,6 +1,6 @@
 {
-  "name": "Kookboek",
-  "short_name": "Kookboek",
+  "name": "KoeleKook",
+  "short_name": "KoeleKook",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

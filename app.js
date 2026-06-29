@@ -95,7 +95,7 @@ async function saveIndex(entries, sha){
 ------------------------------------------------- */
 function parseRecipe(raw){
   const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
-  if(!match) throw new Error('Could not parse recipe file (missing frontmatter).');
+  if(!match) throw new Error('Kon receptbestand niet lezen (frontmatter ontbreekt).');
   const meta = JSON.parse(match[1]);
   const body = match[2];
   const steps = [];
@@ -191,7 +191,8 @@ function useFallback(img){ img.onerror = () => { img.onerror = null; img.src = F
 
 /* ---------- Router ---------- */
 const appEl = document.getElementById('app');
-const topTitle = document.getElementById('topTitle');
+const topLogo = document.getElementById('topLogo');
+const topTitleText = document.getElementById('topTitleText');
 const backBtn = document.getElementById('backBtn');
 const addBtn = document.getElementById('addBtn');
 const navSearchBtn = document.getElementById('navSearchBtn');
@@ -219,8 +220,10 @@ navSearchBtn.addEventListener('click', openSearch);
 navSearchClose.addEventListener('click', closeSearch);
 searchInput.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeSearch(); });
 
-function setChrome({ title, showBack, showAdd, showSearch }){
-  topTitle.textContent = title;
+function setChrome({ title, showBack, showAdd, showSearch, logo }){
+  // The home view shows the wordmark logo; other views show a text title.
+  topLogo.hidden = !logo;
+  topTitleText.textContent = logo ? '' : title;
   backBtn.hidden = !showBack;
   addBtn.hidden = !showAdd;
   navSearchBtn.hidden = !showSearch;
@@ -245,7 +248,7 @@ async function render(){
 
 /* ---------- List view ---------- */
 async function renderList(){
-  setChrome({ title: 'Kookboek', showBack: false, showAdd: canEdit(), showSearch: true });
+  setChrome({ title: 'KoeleKook', showBack: false, showAdd: canEdit(), showSearch: true, logo: true });
   appEl.innerHTML = document.getElementById('tpl-list').innerHTML;
   const grid = document.getElementById('cardGrid');
   const empty = document.getElementById('emptyState');
@@ -256,7 +259,7 @@ async function renderList(){
     const idx = await getIndex();
     entries = idx.entries;
   }catch(e){
-    loading.textContent = 'Could not load recipes: ' + e.message;
+    loading.textContent = 'Kon recepten niet laden: ' + e.message;
     return;
   }
   loading.hidden = true;
@@ -288,18 +291,18 @@ async function renderList(){
 
 /* ---------- Detail view ---------- */
 async function renderDetail(slug){
-  setChrome({ title: 'Recipe', showBack: true, showAdd: false });
-  appEl.innerHTML = '<p class="empty">Loading…</p>';
+  setChrome({ title: 'Recept', showBack: true, showAdd: false });
+  appEl.innerHTML = '<p class="empty">Laden…</p>';
   let file;
   try{ file = await gh.getFile(`recipes/${slug}.md`); }
   catch(e){ appEl.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`; return; }
-  if(!file){ appEl.innerHTML = '<p class="empty">Recipe not found.</p>'; return; }
+  if(!file){ appEl.innerHTML = '<p class="empty">Recept niet gevonden.</p>'; return; }
 
   const recipe = parseRecipe(file.text);
   const baseWeight = computeBaseWeight(recipe.ingredients);
 
   appEl.innerHTML = document.getElementById('tpl-detail').innerHTML;
-  topTitle.textContent = recipe.title;
+  topTitleText.textContent = recipe.title;
   document.getElementById('detailTitle').textContent = recipe.title;
   const img = appEl.querySelector('.detail-photo img');
   useFallback(img);
@@ -363,7 +366,7 @@ async function renderDetail(slug){
 
 /* ---------- Form view (new / edit) ---------- */
 async function renderForm(editSlug){
-  setChrome({ title: editSlug ? 'Edit recipe' : 'New recipe', showBack: true, showAdd: false });
+  setChrome({ title: editSlug ? 'Recept bewerken' : 'Nieuw recept', showBack: true, showAdd: false });
   appEl.innerHTML = document.getElementById('tpl-form').innerHTML;
 
   let existing = null, existingSha = null, existingImageSha = null;
@@ -399,8 +402,8 @@ async function renderForm(editSlug){
     const row = document.createElement('div');
     row.className = 'ingredient-row';
     row.innerHTML = `
-      <input type="text" class="ing-name" placeholder="Name" value="${data ? escapeHtml(data.name) : ''}">
-      <input type="number" step="any" class="ing-amount" placeholder="Amt" value="${data ? data.amount : ''}">
+      <input type="text" class="ing-name" placeholder="Naam" value="${data ? escapeHtml(data.name) : ''}">
+      <input type="number" step="any" class="ing-amount" placeholder="Hvh" value="${data ? data.amount : ''}">
       <select class="ing-unit">
         ${['g','kg','ml','l','tsp','tbsp','cup','pcs'].map(u => `<option value="${u}" ${data && data.unit===u?'selected':''}>${u}</option>`).join('')}
       </select>
@@ -448,7 +451,7 @@ async function renderForm(editSlug){
     num.className = 'step-num';
     const ta = document.createElement('textarea');
     ta.value = text || '';
-    ta.placeholder = 'Describe this step…';
+    ta.placeholder = 'Beschrijf deze stap…';
     ta.addEventListener('focus', () => { lastFocusedStep = ta; });
     const rm = document.createElement('button');
     rm.type = 'button'; rm.className = 'rowremove'; rm.innerHTML = '&times;';
@@ -474,14 +477,14 @@ async function renderForm(editSlug){
   document.getElementById('recipeForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const status = document.getElementById('formStatus');
-    status.hidden = false; status.className = 'form-status'; status.textContent = 'Saving…';
+    status.hidden = false; status.className = 'form-status'; status.textContent = 'Opslaan…';
     try{
       const title = document.getElementById('f-title').value.trim();
       const ingredients = currentIngredients();
       const steps = [...stepsEl.querySelectorAll('textarea')].map(t => t.value.trim()).filter(Boolean);
-      if(!title) throw new Error('Title is required.');
-      if(ingredients.length === 0) throw new Error('Add at least one ingredient.');
-      if(steps.length === 0) throw new Error('Add at least one step.');
+      if(!title) throw new Error('Titel is verplicht.');
+      if(ingredients.length === 0) throw new Error('Voeg minstens één ingrediënt toe.');
+      if(steps.length === 0) throw new Error('Voeg minstens één stap toe.');
 
       const idx = await getIndex();
       let slug = editSlug;
@@ -507,7 +510,7 @@ async function renderForm(editSlug){
       entries.sort((a,b) => a.title.localeCompare(b.title));
       await saveIndex(entries, idx.sha);
 
-      status.className = 'form-status success'; status.textContent = 'Saved!';
+      status.className = 'form-status success'; status.textContent = 'Opgeslagen!';
       location.hash = `#/r/${encodeURIComponent(slug)}`;
     }catch(err){
       status.className = 'form-status error'; status.textContent = err.message;
@@ -515,7 +518,7 @@ async function renderForm(editSlug){
   });
 
   document.getElementById('deleteBtn').addEventListener('click', async () => {
-    if(!confirm('Delete this recipe? This cannot be undone.')) return;
+    if(!confirm('Dit recept verwijderen? Dit kan niet ongedaan worden gemaakt.')) return;
     try{
       const file = await gh.getFile(`recipes/${editSlug}.md`);
       if(file) await gh.deleteFile(`recipes/${editSlug}.md`, `Delete ${existing.title}`, file.sha);
@@ -529,7 +532,7 @@ async function renderForm(editSlug){
 
 /* ---------- Settings view ---------- */
 function renderSettings(){
-  setChrome({ title: 'Settings', showBack: true, showAdd: false });
+  setChrome({ title: 'Instellingen', showBack: true, showAdd: false });
   appEl.innerHTML = document.getElementById('tpl-settings').innerHTML;
   const cfg = getConfig() || {};
   // Pre-fill repo fields with the public defaults so a contributor normally
@@ -548,7 +551,7 @@ function renderSettings(){
       token: document.getElementById('s-token').value.trim()
     });
     const status = document.getElementById('settingsStatus');
-    status.hidden = false; status.className = 'form-status success'; status.textContent = 'Saved.';
+    status.hidden = false; status.className = 'form-status success'; status.textContent = 'Opgeslagen.';
     setTimeout(() => { location.hash = '#/'; }, 500);
   });
 }
