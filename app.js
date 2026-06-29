@@ -124,7 +124,8 @@ function computeBaseWeight(ingredients){
 function formatAmount(amount, unit){
   if(unit === 'g' || unit === 'ml') return amount >= 10 ? Math.round(amount) : Math.round(amount*10)/10;
   if(unit === 'kg' || unit === 'l') return Math.round(amount*100)/100;
-  return Math.round(amount*4)/4; // pcs, tsp, tbsp, cup -> quarter precision
+  if(unit === 'pcs') return Math.max(1, Math.round(amount)); // whole pieces (e.g. eggs), never 0
+  return Math.round(amount*4)/4; // tsp, tbsp, cup -> quarter precision
 }
 function amountText(amount, unit){
   const v = formatAmount(amount, unit);
