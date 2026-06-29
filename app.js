@@ -194,16 +194,38 @@ const appEl = document.getElementById('app');
 const topTitle = document.getElementById('topTitle');
 const backBtn = document.getElementById('backBtn');
 const addBtn = document.getElementById('addBtn');
+const navSearchBtn = document.getElementById('navSearchBtn');
+const navSearch = document.getElementById('navSearch');
+const navSearchClose = document.getElementById('navSearchClose');
+const searchInput = document.getElementById('searchInput');
 
 window.addEventListener('hashchange', render);
 document.getElementById('settingsBtn').addEventListener('click', () => { location.hash = '#/settings'; });
 backBtn.addEventListener('click', () => { location.hash = '#/'; });
 addBtn.addEventListener('click', () => { location.hash = '#/new'; });
 
-function setChrome({ title, showBack, showAdd }){
+/* ---- Top-bar search: icon expands the input across the bar ---- */
+function openSearch(){
+  navSearch.dataset.open = 'true';
+  navSearchBtn.setAttribute('aria-expanded', 'true');
+  searchInput.focus();
+}
+function closeSearch(){
+  navSearch.dataset.open = 'false';
+  navSearchBtn.setAttribute('aria-expanded', 'false');
+  if(searchInput.value){ searchInput.value = ''; searchInput.dispatchEvent(new Event('input')); }
+}
+navSearchBtn.addEventListener('click', openSearch);
+navSearchClose.addEventListener('click', closeSearch);
+searchInput.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeSearch(); });
+
+function setChrome({ title, showBack, showAdd, showSearch }){
   topTitle.textContent = title;
   backBtn.hidden = !showBack;
   addBtn.hidden = !showAdd;
+  navSearchBtn.hidden = !showSearch;
+  // Collapse and clear the search whenever we leave a searchable view.
+  if(!showSearch){ navSearch.dataset.open = 'false'; navSearchBtn.setAttribute('aria-expanded', 'false'); searchInput.value = ''; }
 }
 
 async function render(){
@@ -223,12 +245,11 @@ async function render(){
 
 /* ---------- List view ---------- */
 async function renderList(){
-  setChrome({ title: 'Kookboek', showBack: false, showAdd: canEdit() });
+  setChrome({ title: 'Kookboek', showBack: false, showAdd: canEdit(), showSearch: true });
   appEl.innerHTML = document.getElementById('tpl-list').innerHTML;
   const grid = document.getElementById('cardGrid');
   const empty = document.getElementById('emptyState');
   const loading = document.getElementById('loadingState');
-  const search = document.getElementById('searchInput');
 
   let entries = [];
   try{
@@ -257,25 +278,12 @@ async function renderList(){
     });
   }
   draw(entries);
-  search.addEventListener('input', () => {
-    const q = search.value.toLowerCase();
+  // The search input lives in the top bar (persistent chrome), so bind with
+  // a property assignment to avoid stacking duplicate handlers on re-render.
+  searchInput.oninput = () => {
+    const q = searchInput.value.toLowerCase();
     draw(entries.filter(e => e.title.toLowerCase().includes(q)));
-  });
-
-  // Search stays hidden behind its icon until tapped; Escape or an empty
-  // blur collapses it again and clears any active filter.
-  const searchWrap = appEl.querySelector('.searchwrap');
-  const searchToggle = document.getElementById('searchToggle');
-  function setSearchOpen(open){
-    searchWrap.dataset.expanded = open ? 'true' : 'false';
-    searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    search.hidden = !open;
-    if(open){ search.focus(); }
-    else if(search.value){ search.value = ''; draw(entries); }
-  }
-  searchToggle.addEventListener('click', () => setSearchOpen(true));
-  search.addEventListener('keydown', (e) => { if(e.key === 'Escape') setSearchOpen(false); });
-  search.addEventListener('blur', () => { if(!search.value) setSearchOpen(false); });
+  };
 }
 
 /* ---------- Detail view ---------- */
@@ -343,6 +351,14 @@ async function renderDetail(slug){
   const editBtn = document.getElementById('editBtn');
   editBtn.hidden = !canEdit();
   editBtn.addEventListener('click', () => { location.hash = `#/edit/${encodeURIComponent(slug)}`; });
+
+  // Fixed bottom bar: smooth-scroll to the ingredients or steps section.
+  appEl.querySelectorAll('.jumpbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = document.getElementById(btn.dataset.target);
+      if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 }
 
 /* ---------- Form view (new / edit) ---------- */
