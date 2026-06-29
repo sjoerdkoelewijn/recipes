@@ -1,5 +1,14 @@
 [
   {
+    "slug": "amandelcroissant-blondies-glutenvrij",
+    "title": "Amandelcroissant Blondies (Glutenvrij)",
+    "image": "images/amandelcroissant-blondies-glutenvrij.jpg",
+    "tags": [
+      "zoet"
+    ],
+    "baseWeightGrams": 2848
+  },
+  {
     "slug": "chocolademousse",
     "title": "Chocolademousse",
     "image": "images/chocolademousse.jpg",
