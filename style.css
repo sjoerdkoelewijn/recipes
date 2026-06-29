@@ -50,6 +50,7 @@ h1,h2,h3{margin:0; font-family:var(--font);}
   font-size:16px; font-weight:600; line-height:1.25; color:var(--ink);
 }
 .iconbtn{
+  display:flex; align-items:center; justify-content:center;
   background:transparent; border:none; font-size:1.25rem; color:var(--ink);
   width:40px; height:40px; border-radius:var(--r-full); cursor:pointer;
 }
