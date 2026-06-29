@@ -3,21 +3,96 @@
   "title": "Wortelcake met Gember en Speculaas",
   "image": "images/wortelcake-gember-speculaas.jpg",
   "ingredients": [
-    { "id": "eieren", "name": "Eieren", "amount": 3, "unit": "pcs" },
-    { "id": "wortels", "name": "Wortels", "amount": 350, "unit": "g" },
-    { "id": "basterdsuiker", "name": "Basterdsuiker", "amount": 150, "unit": "g" },
-    { "id": "speculaaskruiden", "name": "Speculaaskruiden", "amount": 21, "unit": "g" },
-    { "id": "bakpoeder", "name": "Bakpoeder", "amount": 15, "unit": "g" },
-    { "id": "vanillesuiker", "name": "Vanillesuiker", "amount": 16, "unit": "g" },
-    { "id": "rozijnen", "name": "Rozijnen", "amount": 100, "unit": "g" },
-    { "id": "amandelaroma", "name": "Amandelaroma", "amount": 30, "unit": "ml" },
-    { "id": "cointreau", "name": "Cointreau", "amount": 60, "unit": "ml" },
-    { "id": "lijnzaad", "name": "Lijnzaad", "amount": 75, "unit": "g" },
-    { "id": "havermout", "name": "Havermout", "amount": 75, "unit": "g" },
-    { "id": "notenmix", "name": "Notenmix", "amount": 100, "unit": "g" },
-    { "id": "roomboter", "name": "Roomboter", "amount": 250, "unit": "g" },
-    { "id": "speltmeel", "name": "Speltmeel", "amount": 250, "unit": "g" },
-    { "id": "gember", "name": "Gember", "amount": 100, "unit": "g" }
+    {
+      "name": "Eieren",
+      "id": "eieren",
+      "amount": 3,
+      "unit": "pcs"
+    },
+    {
+      "name": "Wortels",
+      "id": "wortels",
+      "amount": 350,
+      "unit": "g"
+    },
+    {
+      "name": "Basterdsuiker",
+      "id": "basterdsuiker",
+      "amount": 150,
+      "unit": "g"
+    },
+    {
+      "name": "Speculaaskruiden",
+      "id": "speculaaskruiden",
+      "amount": 21,
+      "unit": "g"
+    },
+    {
+      "name": "Bakpoeder",
+      "id": "bakpoeder",
+      "amount": 15,
+      "unit": "g"
+    },
+    {
+      "name": "Vanillesuiker",
+      "id": "vanillesuiker",
+      "amount": 16,
+      "unit": "g"
+    },
+    {
+      "name": "Rozijnen",
+      "id": "rozijnen",
+      "amount": 100,
+      "unit": "g"
+    },
+    {
+      "name": "Amandelaroma",
+      "id": "amandelaroma",
+      "amount": 30,
+      "unit": "ml"
+    },
+    {
+      "name": "Cointreau",
+      "id": "cointreau",
+      "amount": 60,
+      "unit": "ml"
+    },
+    {
+      "name": "Gebroken lijnzaad",
+      "id": "gebroken-lijnzaad",
+      "amount": 75,
+      "unit": "g"
+    },
+    {
+      "name": "Havermout",
+      "id": "havermout",
+      "amount": 75,
+      "unit": "g"
+    },
+    {
+      "name": "Notenmix",
+      "id": "notenmix",
+      "amount": 100,
+      "unit": "g"
+    },
+    {
+      "name": "Roomboter",
+      "id": "roomboter",
+      "amount": 250,
+      "unit": "g"
+    },
+    {
+      "name": "Speltmeel",
+      "id": "speltmeel",
+      "amount": 250,
+      "unit": "g"
+    },
+    {
+      "name": "Gember",
+      "id": "gember",
+      "amount": 100,
+      "unit": "g"
+    }
   ]
 }
 ---
