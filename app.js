@@ -205,6 +205,7 @@ const navSearchClose = document.getElementById('navSearchClose');
 const searchInput = document.getElementById('searchInput');
 
 const settingsBtn = document.getElementById('settingsBtn');
+const gotoSettingsBtn = document.getElementById('gotoSettingsBtn');
 const filterPanel = document.getElementById('filterPanel');
 const filterChips = document.getElementById('filterChips');
 const topbarEl = document.querySelector('.topbar');
@@ -214,6 +215,7 @@ let redrawList = null;             // set by renderList so the filter can re-app
 window.addEventListener('hashchange', render);
 backBtn.addEventListener('click', () => { location.hash = '#/'; });
 addBtn.addEventListener('click', () => { location.hash = '#/new'; });
+gotoSettingsBtn.addEventListener('click', () => { location.hash = '#/settings'; });
 
 /* ---- Top-bar search: icon expands the input across the bar ---- */
 function openSearch(){
@@ -256,7 +258,7 @@ ALL_TAGS.forEach(tag => {
   filterChips.appendChild(chip);
 });
 
-function setChrome({ title, showBack, showAdd, showSearch, showFilter, logo }){
+function setChrome({ title, showBack, showAdd, showSearch, showFilter, showSettings, logo }){
   // The home view shows the wordmark logo; other views show a text title.
   topLogo.hidden = !logo;
   topTitleText.textContent = logo ? '' : title;
@@ -264,6 +266,7 @@ function setChrome({ title, showBack, showAdd, showSearch, showFilter, logo }){
   addBtn.hidden = !showAdd;
   navSearchBtn.hidden = !showSearch;
   settingsBtn.hidden = !showFilter;
+  gotoSettingsBtn.hidden = !showSettings;
   // Collapse search / filter whenever we leave a view that uses them.
   if(!showSearch){ navSearch.dataset.open = 'false'; navSearchBtn.setAttribute('aria-expanded', 'false'); searchInput.value = ''; }
   if(!showFilter){ closeFilter(); }
@@ -418,7 +421,7 @@ async function renderDetail(slug){
 
 /* ---------- Form view (new / edit) ---------- */
 async function renderForm(editSlug){
-  setChrome({ title: editSlug ? 'Recept bewerken' : 'Nieuw recept', showBack: true, showAdd: false });
+  setChrome({ title: editSlug ? 'Recept bewerken' : 'Nieuw recept', showBack: true, showAdd: false, showSettings: true });
   appEl.innerHTML = document.getElementById('tpl-form').innerHTML;
 
   let existing = null, existingSha = null, existingImageSha = null;

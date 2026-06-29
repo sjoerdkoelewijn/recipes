@@ -245,8 +245,6 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 }
 .filter-panel[data-open="true"]{display:flex;}
 .filter-heading{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
-.filter-settings{font-size:14px; color:var(--muted); text-decoration:underline; margin-top:var(--sp-xs);}
-.filter-settings:active{color:var(--ink);}
 
 /* ---- Buttons ---- */
 .primarybtn{
