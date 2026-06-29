@@ -1,5 +1,11 @@
 [
   {
+    "slug": "chocolademousse",
+    "title": "Chocolademousse",
+    "image": "images/chocolademousse.jpg",
+    "baseWeightGrams": 1033
+  },
+  {
     "slug": "example-pancakes",
     "title": "Pancakes",
     "image": "",
