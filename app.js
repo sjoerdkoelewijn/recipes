@@ -248,7 +248,9 @@ async function render(){
 
 /* ---------- List view ---------- */
 async function renderList(){
-  setChrome({ title: 'KoeleKook', showBack: false, showAdd: canEdit(), showSearch: true, logo: true });
+  // The + is shown to everyone; the router sends visitors without a valid
+  // token to Settings, and token holders to the new-recipe form.
+  setChrome({ title: 'KoeleKook', showBack: false, showAdd: true, showSearch: true, logo: true });
   appEl.innerHTML = document.getElementById('tpl-list').innerHTML;
   const grid = document.getElementById('cardGrid');
   const empty = document.getElementById('emptyState');
