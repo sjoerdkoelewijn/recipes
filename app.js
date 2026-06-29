@@ -107,10 +107,14 @@ function parseRecipe(raw){
   return meta;
 }
 function serializeRecipe(r){
-  const meta = { title: r.title, image: r.image || '', ingredients: r.ingredients };
+  const meta = { title: r.title, image: r.image || '', tags: r.tags || [], ingredients: r.ingredients };
   const stepsText = r.steps.map((s,i) => `${i+1}. ${s}`).join('\n');
   return `---\n${JSON.stringify(meta, null, 2)}\n---\n\n${stepsText}\n`;
 }
+
+/* Known recipe tags, in display order. */
+const ALL_TAGS = ['hartig', 'zoet'];
+function tagLabel(t){ return t.charAt(0).toUpperCase() + t.slice(1); }
 
 /* ---------- Scaling ---------- */
 const WEIGHT_UNITS = { g: 1, kg: 1000 };
@@ -200,13 +204,20 @@ const navSearch = document.getElementById('navSearch');
 const navSearchClose = document.getElementById('navSearchClose');
 const searchInput = document.getElementById('searchInput');
 
+const settingsBtn = document.getElementById('settingsBtn');
+const filterPanel = document.getElementById('filterPanel');
+const filterChips = document.getElementById('filterChips');
+const topbarEl = document.querySelector('.topbar');
+const activeTags = new Set();      // tags currently filtered on
+let redrawList = null;             // set by renderList so the filter can re-apply
+
 window.addEventListener('hashchange', render);
-document.getElementById('settingsBtn').addEventListener('click', () => { location.hash = '#/settings'; });
 backBtn.addEventListener('click', () => { location.hash = '#/'; });
 addBtn.addEventListener('click', () => { location.hash = '#/new'; });
 
 /* ---- Top-bar search: icon expands the input across the bar ---- */
 function openSearch(){
+  closeFilter();
   navSearch.dataset.open = 'true';
   navSearchBtn.setAttribute('aria-expanded', 'true');
   searchInput.focus();
@@ -220,15 +231,42 @@ navSearchBtn.addEventListener('click', openSearch);
 navSearchClose.addEventListener('click', closeSearch);
 searchInput.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeSearch(); });
 
-function setChrome({ title, showBack, showAdd, showSearch, logo }){
+/* ---- Tag filter: the gear icon opens a panel of tag toggles ---- */
+function positionFilterPanel(){
+  // Anchor just below the sticky, variable-height top bar.
+  filterPanel.style.top = topbarEl.getBoundingClientRect().bottom + 'px';
+}
+function openFilter(){ closeSearch(); positionFilterPanel(); filterPanel.dataset.open = 'true'; settingsBtn.setAttribute('aria-expanded', 'true'); }
+function closeFilter(){ filterPanel.dataset.open = 'false'; settingsBtn.setAttribute('aria-expanded', 'false'); }
+settingsBtn.addEventListener('click', () => { filterPanel.dataset.open === 'true' ? closeFilter() : openFilter(); });
+document.addEventListener('click', (e) => {
+  if(filterPanel.dataset.open === 'true' && !filterPanel.contains(e.target) && !settingsBtn.contains(e.target)) closeFilter();
+});
+ALL_TAGS.forEach(tag => {
+  const chip = document.createElement('button');
+  chip.type = 'button'; chip.className = 'tag-chip';
+  chip.textContent = tagLabel(tag); chip.setAttribute('aria-pressed', 'false');
+  chip.addEventListener('click', () => {
+    if(activeTags.has(tag)) activeTags.delete(tag); else activeTags.add(tag);
+    const on = activeTags.has(tag);
+    chip.classList.toggle('selected', on);
+    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if(redrawList) redrawList();
+  });
+  filterChips.appendChild(chip);
+});
+
+function setChrome({ title, showBack, showAdd, showSearch, showFilter, logo }){
   // The home view shows the wordmark logo; other views show a text title.
   topLogo.hidden = !logo;
   topTitleText.textContent = logo ? '' : title;
   backBtn.hidden = !showBack;
   addBtn.hidden = !showAdd;
   navSearchBtn.hidden = !showSearch;
-  // Collapse and clear the search whenever we leave a searchable view.
+  settingsBtn.hidden = !showFilter;
+  // Collapse search / filter whenever we leave a view that uses them.
   if(!showSearch){ navSearch.dataset.open = 'false'; navSearchBtn.setAttribute('aria-expanded', 'false'); searchInput.value = ''; }
+  if(!showFilter){ closeFilter(); }
 }
 
 async function render(){
@@ -250,7 +288,7 @@ async function render(){
 async function renderList(){
   // The + is shown to everyone; the router sends visitors without a valid
   // token to Settings, and token holders to the new-recipe form.
-  setChrome({ title: 'KoeleKook', showBack: false, showAdd: true, showSearch: true, logo: true });
+  setChrome({ title: 'KoeleKook', showBack: false, showAdd: true, showSearch: true, showFilter: true, logo: true });
   appEl.innerHTML = document.getElementById('tpl-list').innerHTML;
   const grid = document.getElementById('cardGrid');
   const empty = document.getElementById('emptyState');
@@ -265,7 +303,6 @@ async function renderList(){
     return;
   }
   loading.hidden = true;
-  empty.hidden = entries.length !== 0;
 
   function draw(list){
     grid.innerHTML = '';
@@ -282,13 +319,26 @@ async function renderList(){
       grid.appendChild(node);
     });
   }
-  draw(entries);
-  // The search input lives in the top bar (persistent chrome), so bind with
-  // a property assignment to avoid stacking duplicate handlers on re-render.
-  searchInput.oninput = () => {
-    const q = searchInput.value.toLowerCase();
-    draw(entries.filter(e => e.title.toLowerCase().includes(q)));
-  };
+  // Apply the search text and the active tag filter together.
+  function apply(){
+    const q = searchInput.value.trim().toLowerCase();
+    const list = entries.filter(e => {
+      const matchesText = !q || e.title.toLowerCase().includes(q);
+      const matchesTags = activeTags.size === 0 || (e.tags || []).some(t => activeTags.has(t));
+      return matchesText && matchesTags;
+    });
+    draw(list);
+    empty.hidden = list.length !== 0;
+    empty.textContent = entries.length === 0
+      ? 'Nog geen recepten. Tik op + om je eerste toe te voegen.'
+      : 'Geen recepten gevonden.';
+  }
+  apply();
+  // The search input lives in the persistent top bar; property assignment
+  // (re)binds without stacking duplicate handlers across re-renders.
+  searchInput.oninput = apply;
+  // Let the tag-filter chips trigger a redraw with the current entries.
+  redrawList = apply;
 }
 
 /* ---------- Detail view ---------- */
@@ -393,6 +443,24 @@ async function renderForm(editSlug){
     imageBase64 = base64; imageChanged = true;
     const prev = document.getElementById('f-imagePreview');
     prev.src = dataUrl; prev.hidden = false;
+  });
+
+  // Tag selection: toggle chips for each known tag.
+  const selectedTags = new Set(existing && existing.tags ? existing.tags : []);
+  const tagChipsEl = document.getElementById('tagChips');
+  ALL_TAGS.forEach(tag => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'tag-chip' + (selectedTags.has(tag) ? ' selected' : '');
+    chip.textContent = tagLabel(tag);
+    chip.setAttribute('aria-pressed', selectedTags.has(tag) ? 'true' : 'false');
+    chip.addEventListener('click', () => {
+      if(selectedTags.has(tag)) selectedTags.delete(tag); else selectedTags.add(tag);
+      const on = selectedTags.has(tag);
+      chip.classList.toggle('selected', on);
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    tagChipsEl.appendChild(chip);
   });
 
   const rowsEl = document.getElementById('ingredientRows');
@@ -501,12 +569,13 @@ async function renderForm(editSlug){
         await gh.putImage(`recipes/${imagePath}`, imageBase64, `Add photo for ${title}`, existingImgFile ? existingImgFile.sha : undefined);
       }
 
-      const recipeObj = { title, image: imagePath, ingredients, steps };
+      const tags = ALL_TAGS.filter(t => selectedTags.has(t));
+      const recipeObj = { title, image: imagePath, tags, ingredients, steps };
       const raw = serializeRecipe(recipeObj);
       await gh.putFile(`recipes/${slug}.md`, raw, editSlug ? `Update ${title}` : `Add ${title}`, existingSha || undefined);
 
       const baseWeightGrams = computeBaseWeight(ingredients);
-      const newEntry = { slug, title, image: imagePath, baseWeightGrams };
+      const newEntry = { slug, title, image: imagePath, tags, baseWeightGrams };
       let entries = idx.entries.filter(e => e.slug !== slug);
       entries.push(newEntry);
       entries.sort((a,b) => a.title.localeCompare(b.title));

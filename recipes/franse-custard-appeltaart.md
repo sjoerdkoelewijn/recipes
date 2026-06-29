@@ -2,6 +2,7 @@
 {
   "title": "Franse Custard Appeltaart",
   "image": "images/franse-custard-appeltaart.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "appels", "name": "Stevige appels (5 kleine of 4 grote)", "amount": 5, "unit": "pcs" },
     { "id": "citroensap", "name": "Citroensap", "amount": 15, "unit": "ml" },

@@ -2,6 +2,7 @@
 {
   "title": "Rabarber Flantaart",
   "image": "images/rabarber-flantaart.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "eieren", "name": "Eieren", "amount": 5, "unit": "pcs" },
     { "id": "rabarber", "name": "Rabarber", "amount": 400, "unit": "g" },

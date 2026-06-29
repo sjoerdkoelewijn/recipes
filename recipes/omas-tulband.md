@@ -2,6 +2,7 @@
 {
   "title": "Oma's Tulband",
   "image": "images/omas-tulband.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "boter", "name": "Boter (op kamertemperatuur)", "amount": 250, "unit": "g" },
     { "id": "suiker", "name": "Suiker", "amount": 200, "unit": "g" },

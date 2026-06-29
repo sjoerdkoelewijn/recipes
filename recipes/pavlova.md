@@ -2,6 +2,7 @@
 {
   "title": "Pavlova",
   "image": "images/pavlova.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "eieren", "name": "Grote eieren", "amount": 7, "unit": "pcs" },
     { "id": "suiker_meringue", "name": "Fijne suiker (voor meringue)", "amount": 75, "unit": "g" },

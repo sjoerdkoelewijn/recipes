@@ -226,6 +226,28 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 }
 .chip:active{background:var(--surface-strong);}
 
+/* ---- Tag chips (recipe form + filter panel) ---- */
+.tag-select{display:flex; flex-wrap:wrap; gap:var(--sp-sm);}
+.tag-chip{
+  font-size:14px; font-weight:500; font-family:var(--font);
+  background:var(--canvas); color:var(--ink);
+  border:1px solid var(--hairline); border-radius:var(--r-full);
+  padding:8px 16px; cursor:pointer;
+}
+.tag-chip.selected{background:var(--ink); color:var(--on-primary); border-color:var(--ink);}
+
+/* ---- Filter panel (opened from the top-bar filter icon) ---- */
+.filter-panel{
+  position:fixed; right:var(--sp-base); z-index:30;
+  display:none; flex-direction:column; gap:var(--sp-sm);
+  background:var(--canvas); border:1px solid var(--hairline); border-radius:var(--r-md);
+  box-shadow:var(--shadow-1); padding:var(--sp-base); min-width:200px;
+}
+.filter-panel[data-open="true"]{display:flex;}
+.filter-heading{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
+.filter-settings{font-size:14px; color:var(--muted); text-decoration:underline; margin-top:var(--sp-xs);}
+.filter-settings:active{color:var(--ink);}
+
 /* ---- Buttons ---- */
 .primarybtn{
   background:var(--rausch); color:var(--on-primary); border:none; border-radius:var(--r-sm); padding:14px 24px;

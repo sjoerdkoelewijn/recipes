@@ -2,6 +2,7 @@
 {
   "title": "Wortelcake met Gember en Speculaas",
   "image": "images/wortelcake-gember-speculaas.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     {
       "name": "Eieren",
@@ -101,7 +102,7 @@
 2. Rasp de {wortels} en de {gember} fijn.
 3. Klop de {eieren} met de {basterdsuiker} en {vanillesuiker} luchtig.
 4. Smelt de {roomboter} en roer deze samen met de {amandelaroma} en {cointreau} door het eimengsel.
-5. Mix in een andere kom de {speltmeel}, {bakpoeder}, {speculaaskruiden}, {lijnzaad} en {havermout}.
+5. Mix in een andere kom de {speltmeel}, {bakpoeder}, {speculaaskruiden}, {gebroken-lijnzaad} en {havermout}.
 6. Spatel de droge ingrediënten door het natte mengsel.
 7. Vouw de geraspte {wortels}, {gember}, {rozijnen} en {notenmix} erdoor.
 8. Schenk het beslag in het cakeblik en bak 50 minuten op 200°C, tot een satéprikker er droog uitkomt.

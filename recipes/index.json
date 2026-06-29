@@ -3,54 +3,81 @@
     "slug": "chocolademousse",
     "title": "Chocolademousse",
     "image": "images/chocolademousse.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 1033
   },
   {
     "slug": "cream-cheese-taart",
     "title": "Cream Cheese Taart",
     "image": "images/cream-cheese-taart.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 1700
   },
   {
     "slug": "franse-custard-appeltaart",
     "title": "Franse Custard Appeltaart",
     "image": "images/franse-custard-appeltaart.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 278
   },
   {
     "slug": "omas-tulband",
     "title": "Oma's Tulband",
     "image": "images/omas-tulband.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 1178
   },
   {
     "slug": "pavlova",
     "title": "Pavlova",
     "image": "images/pavlova.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 1441
   },
   {
     "slug": "quiche-zalm-dille",
     "title": "Quiche met Gerookte Zalm en Dille",
     "image": "images/quiche-zalm-dille.jpg",
+    "tags": [
+      "hartig"
+    ],
     "baseWeightGrams": 320
   },
   {
     "slug": "rabarber-flantaart",
     "title": "Rabarber Flantaart",
     "image": "images/rabarber-flantaart.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 977
   },
   {
     "slug": "tiramisu",
     "title": "Tiramisu",
     "image": "images/tiramisu.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 869
   },
   {
     "slug": "wortelcake-gember-speculaas",
     "title": "Wortelcake met Gember en Speculaas",
     "image": "images/wortelcake-gember-speculaas.jpg",
+    "tags": [
+      "zoet"
+    ],
     "baseWeightGrams": 1502
   }
 ]

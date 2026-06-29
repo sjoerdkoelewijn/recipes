@@ -2,6 +2,7 @@
 {
   "title": "Quiche met Gerookte Zalm en Dille",
   "image": "images/quiche-zalm-dille.jpg",
+  "tags": ["hartig"],
   "ingredients": [
     { "id": "deeg", "name": "Rol kant-en-klaar deeg (quiche/taartdeeg)", "amount": 1, "unit": "pcs" },
     { "id": "uien", "name": "Grote uien", "amount": 2, "unit": "pcs" },

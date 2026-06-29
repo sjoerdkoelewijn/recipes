@@ -2,6 +2,7 @@
 {
   "title": "Tiramisu",
   "image": "images/tiramisu.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "lange_vingers", "name": "Lange vingers (savoiardi)", "amount": 200, "unit": "g" },
     { "id": "mascarpone", "name": "Mascarpone", "amount": 500, "unit": "g" },

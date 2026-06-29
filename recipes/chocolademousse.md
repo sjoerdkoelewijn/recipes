@@ -2,6 +2,7 @@
 {
   "title": "Chocolademousse",
   "image": "images/chocolademousse.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "chocolade", "name": "Pure chocolade (bitterzoet of halfzoet), grof gehakt", "amount": 360, "unit": "g" },
     { "id": "roomboter", "name": "Ongezouten roomboter, in kleine stukjes", "amount": 340, "unit": "g" },

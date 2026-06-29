@@ -2,6 +2,7 @@
 {
   "title": "Cream Cheese Taart",
   "image": "images/cream-cheese-taart.jpg",
+  "tags": ["zoet"],
   "ingredients": [
     { "id": "monchou", "name": "Mon Chou", "amount": 200, "unit": "g" },
     { "id": "mascarpone", "name": "Mascarpone", "amount": 200, "unit": "g" },
