@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kookboek</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button id="backBtn" class="iconbtn" aria-label="Back" hidden>&#8592;</button>
+  <h1 id="topTitle" class="topbar-title">Kookboek</h1>
+  <button id="settingsBtn" class="iconbtn" aria-label="Settings">&#9881;</button>
+</header>
+
+<main id="app"></main>
+
+<button id="addBtn" class="fab" aria-label="New recipe">+</button>
+
+<template id="tpl-list">
+  <div class="searchwrap">
+    <input id="searchInput" type="search" placeholder="Search recipes…" autocomplete="off">
+  </div>
+  <div id="cardGrid" class="card-grid"></div>
+  <p id="emptyState" class="empty" hidden>No recipes yet. Tap + to add your first one.</p>
+  <p id="loadingState" class="empty">Loading…</p>
+</template>
+
+<template id="tpl-card">
+  <a class="card" href="#">
+    <div class="card-img"><img alt=""></div>
+    <div class="card-body">
+      <h3></h3>
+      <span class="weight-pill"></span>
+    </div>
+  </a>
+</template>
+
+<template id="tpl-detail">
+  <div class="detail-photo"><img alt=""></div>
+  <h2 id="detailTitle" class="detail-title"></h2>
+
+  <div class="scale-box">
+    <span class="scale-label">Total weight</span>
+    <div class="scale-readout">
+      <button class="scale-step" data-dir="-1">&#8722;</button>
+      <input id="weightInput" class="scale-display" type="number" inputmode="decimal" step="1">
+      <span class="scale-unit">g</span>
+      <button class="scale-step" data-dir="1">&#43;</button>
+    </div>
+    <button id="resetScaleBtn" class="linkbtn">reset to original</button>
+  </div>
+
+  <section>
+    <h3 class="section-heading">Ingredients</h3>
+    <ul id="ingredientList" class="ingredient-list"></ul>
+  </section>
+
+  <section>
+    <h3 class="section-heading">Steps</h3>
+    <ol id="stepList" class="step-list"></ol>
+  </section>
+
+  <div class="detail-actions">
+    <button id="editBtn" class="secondarybtn">Edit recipe</button>
+  </div>
+</template>
+
+<template id="tpl-form">
+  <form id="recipeForm" class="recipe-form">
+    <label class="field">
+      <span>Title</span>
+      <input id="f-title" type="text" required>
+    </label>
+
+    <label class="field">
+      <span>Photo</span>
+      <input id="f-image" type="file" accept="image/*">
+      <img id="f-imagePreview" class="image-preview" hidden alt="">
+    </label>
+
+    <h3 class="section-heading">Ingredients</h3>
+    <div id="ingredientRows" class="ingredient-rows"></div>
+    <button type="button" id="addIngredientBtn" class="secondarybtn small">+ Add ingredient</button>
+
+    <h3 class="section-heading">Steps</h3>
+    <p class="hint">Tap an ingredient chip to insert its amount into the focused step.</p>
+    <div id="ingredientChips" class="chip-row"></div>
+    <div id="stepRows" class="step-rows"></div>
+    <button type="button" id="addStepBtn" class="secondarybtn small">+ Add step</button>
+
+    <div class="form-actions">
+      <button type="button" id="deleteBtn" class="dangerbtn" hidden>Delete recipe</button>
+      <button type="submit" id="saveBtn" class="primarybtn">Save recipe</button>
+    </div>
+    <p id="formStatus" class="form-status" hidden></p>
+  </form>
+</template>
+
+<template id="tpl-settings">
+  <form id="settingsForm" class="recipe-form">
+    <p class="hint">These connect the app to your GitHub repo. Stored only in this phone's browser — never uploaded anywhere else.</p>
+    <label class="field">
+      <span>GitHub username or org</span>
+      <input id="s-owner" type="text" autocomplete="off" required>
+    </label>
+    <label class="field">
+      <span>Repository name</span>
+      <input id="s-repo" type="text" autocomplete="off" required>
+    </label>
+    <label class="field">
+      <span>Branch</span>
+      <input id="s-branch" type="text" value="main" autocomplete="off">
+    </label>
+    <label class="field">
+      <span>Personal access token (Contents: Read & write)</span>
+      <input id="s-token" type="password" autocomplete="off" required>
+    </label>
+    <div class="form-actions">
+      <button type="submit" class="primarybtn">Save</button>
+    </div>
+    <p id="settingsStatus" class="form-status" hidden></p>
+  </form>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>

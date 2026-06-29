@@ -1,0 +1,485 @@
+/* ---------- Config ---------- */
+const CONFIG_KEY = 'recipeAppConfig';
+function getConfig(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)) || null; }catch(e){ return null; } }
+function setConfig(cfg){ localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+function configReady(){ const c = getConfig(); return !!(c && c.owner && c.repo && c.token); }
+
+/* ---------- base64 helpers (UTF-8 safe) ---------- */
+function b64EncodeUnicode(str){
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
+}
+function b64DecodeUnicode(str){
+  return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+}
+
+/* ---------- GitHub API ---------- */
+const gh = {
+  apiBase(){ const c = getConfig(); return `https://api.github.com/repos/${c.owner}/${c.repo}`; },
+  headers(json=true){
+    const c = getConfig();
+    const h = { 'Accept': 'application/vnd.github+json' };
+    if(c && c.token) h['Authorization'] = `Bearer ${c.token}`;
+    if(json) h['Content-Type'] = 'application/json';
+    return h;
+  },
+  async getFile(path){
+    const c = getConfig();
+    const res = await fetch(`${this.apiBase()}/contents/${path}?ref=${c.branch||'main'}`, { headers: this.headers(false) });
+    if(res.status === 404) return null;
+    if(!res.ok) throw new Error(`GitHub read failed (${res.status})`);
+    const data = await res.json();
+    return { sha: data.sha, text: b64DecodeUnicode(data.content.replace(/\n/g,'')) };
+  },
+  async putFile(path, text, message, sha){
+    const c = getConfig();
+    const body = { message, content: b64EncodeUnicode(text), branch: c.branch||'main' };
+    if(sha) body.sha = sha;
+    const res = await fetch(`${this.apiBase()}/contents/${path}`, {
+      method: 'PUT', headers: this.headers(true), body: JSON.stringify(body)
+    });
+    if(!res.ok){ const t = await res.text(); throw new Error(`GitHub write failed (${res.status}): ${t}`); }
+    return res.json();
+  },
+  async putImage(path, base64Data, message, sha){
+    const c = getConfig();
+    const body = { message, content: base64Data, branch: c.branch||'main' };
+    if(sha) body.sha = sha;
+    const res = await fetch(`${this.apiBase()}/contents/${path}`, {
+      method: 'PUT', headers: this.headers(true), body: JSON.stringify(body)
+    });
+    if(!res.ok){ const t = await res.text(); throw new Error(`Image upload failed (${res.status}): ${t}`); }
+    return res.json();
+  },
+  async deleteFile(path, message, sha){
+    const c = getConfig();
+    const res = await fetch(`${this.apiBase()}/contents/${path}`, {
+      method: 'DELETE', headers: this.headers(true), body: JSON.stringify({ message, sha, branch: c.branch||'main' })
+    });
+    if(!res.ok) throw new Error(`Delete failed (${res.status})`);
+  }
+};
+
+/* ---------- Index (recipes/index.json) for fast list rendering ---------- */
+async function getIndex(){
+  const file = await gh.getFile('recipes/index.json');
+  if(!file) return { sha: null, entries: [] };
+  try{ return { sha: file.sha, entries: JSON.parse(file.text) }; }
+  catch(e){ return { sha: file.sha, entries: [] }; }
+}
+async function saveIndex(entries, sha){
+  const text = JSON.stringify(entries, null, 2);
+  return gh.putFile('recipes/index.json', text, 'Update recipe index', sha);
+}
+
+/* ---------- Recipe markdown format ----------
+---
+{ "title": "...", "image": "images/x.jpg", "ingredients": [{"id","name","amount","unit"}] }
+---
+1. Step text with {ingredientId} placeholders
+2. ...
+------------------------------------------------- */
+function parseRecipe(raw){
+  const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
+  if(!match) throw new Error('Could not parse recipe file (missing frontmatter).');
+  const meta = JSON.parse(match[1]);
+  const body = match[2];
+  const steps = [];
+  body.split('\n').forEach(line => {
+    const m = line.match(/^\s*\d+\.\s+(.*)$/);
+    if(m) steps.push(m[1].trim());
+  });
+  meta.steps = steps;
+  return meta;
+}
+function serializeRecipe(r){
+  const meta = { title: r.title, image: r.image || '', ingredients: r.ingredients };
+  const stepsText = r.steps.map((s,i) => `${i+1}. ${s}`).join('\n');
+  return `---\n${JSON.stringify(meta, null, 2)}\n---\n\n${stepsText}\n`;
+}
+
+/* ---------- Scaling ---------- */
+const WEIGHT_UNITS = { g: 1, kg: 1000 };
+function computeBaseWeight(ingredients){
+  let total = 0, hasWeight = false;
+  ingredients.forEach(i => { if(WEIGHT_UNITS[i.unit]){ total += i.amount * WEIGHT_UNITS[i.unit]; hasWeight = true; } });
+  if(hasWeight) return Math.round(total);
+  const fallback = ingredients.reduce((s,i) => s + Number(i.amount||0), 0);
+  return fallback || 1;
+}
+function formatAmount(amount, unit){
+  if(unit === 'g' || unit === 'ml') return amount >= 10 ? Math.round(amount) : Math.round(amount*10)/10;
+  if(unit === 'kg' || unit === 'l') return Math.round(amount*100)/100;
+  return Math.round(amount*4)/4; // pcs, tsp, tbsp, cup -> quarter precision
+}
+function amountText(amount, unit){
+  const v = formatAmount(amount, unit);
+  return unit === 'pcs' ? `${v}` : `${v} ${unit}`;
+}
+function scaleIngredients(ingredients, factor){
+  return ingredients.map(i => ({ ...i, amount: i.amount * factor }));
+}
+function substitutePlaceholders(text, scaledById){
+  return text.replace(/\{([a-zA-Z0-9_-]+)\}/g, (whole, id) => {
+    const ing = scaledById[id];
+    if(!ing) return whole;
+    const lowerName = ing.name.charAt(0).toLowerCase() + ing.name.slice(1);
+    return `<span class="step-amt">${amountText(ing.amount, ing.unit)} ${lowerName}</span>`;
+  });
+}
+
+/* ---------- Utility ---------- */
+function slugify(text){
+  return text.toString().toLowerCase().trim()
+    .replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'recipe';
+}
+async function uniqueSlug(base, existingSlugs){
+  let slug = base, n = 2;
+  while(existingSlugs.includes(slug)){ slug = `${base}-${n}`; n++; }
+  return slug;
+}
+function compressImage(file, maxWidth=1200, quality=0.82){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      const scale = Math.min(1, maxWidth / img.width);
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+      resolve({ base64: dataUrl.split(',')[1], dataUrl });
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+/* ---------- Router ---------- */
+const appEl = document.getElementById('app');
+const topTitle = document.getElementById('topTitle');
+const backBtn = document.getElementById('backBtn');
+const addBtn = document.getElementById('addBtn');
+
+window.addEventListener('hashchange', render);
+document.getElementById('settingsBtn').addEventListener('click', () => { location.hash = '#/settings'; });
+backBtn.addEventListener('click', () => { location.hash = '#/'; });
+addBtn.addEventListener('click', () => { location.hash = '#/new'; });
+
+function setChrome({ title, showBack, showAdd }){
+  topTitle.textContent = title;
+  backBtn.hidden = !showBack;
+  addBtn.hidden = !showAdd;
+}
+
+async function render(){
+  const hash = location.hash || '#/';
+  if(!configReady() && hash !== '#/settings'){ location.hash = '#/settings'; return; }
+
+  if(hash === '#/' ) return renderList();
+  if(hash === '#/settings') return renderSettings();
+  if(hash === '#/new') return renderForm(null);
+  let m = hash.match(/^#\/r\/(.+)$/); if(m) return renderDetail(decodeURIComponent(m[1]));
+  m = hash.match(/^#\/edit\/(.+)$/); if(m) return renderForm(decodeURIComponent(m[1]));
+  return renderList();
+}
+
+/* ---------- List view ---------- */
+async function renderList(){
+  setChrome({ title: 'Kookboek', showBack: false, showAdd: true });
+  appEl.innerHTML = document.getElementById('tpl-list').innerHTML;
+  const grid = document.getElementById('cardGrid');
+  const empty = document.getElementById('emptyState');
+  const loading = document.getElementById('loadingState');
+  const search = document.getElementById('searchInput');
+
+  let entries = [];
+  try{
+    const idx = await getIndex();
+    entries = idx.entries;
+  }catch(e){
+    loading.textContent = 'Could not load recipes: ' + e.message;
+    return;
+  }
+  loading.hidden = true;
+  empty.hidden = entries.length !== 0;
+
+  function draw(list){
+    grid.innerHTML = '';
+    list.forEach(entry => {
+      const node = document.getElementById('tpl-card').content.cloneNode(true);
+      const a = node.querySelector('a');
+      a.href = `#/r/${encodeURIComponent(entry.slug)}`;
+      const img = node.querySelector('img');
+      if(entry.image){ img.src = `https://raw.githubusercontent.com/${getConfig().owner}/${getConfig().repo}/${getConfig().branch||'main'}/recipes/${entry.image}`; }
+      node.querySelector('h3').textContent = entry.title;
+      node.querySelector('.weight-pill').textContent = `${entry.baseWeightGrams} g`;
+      grid.appendChild(node);
+    });
+  }
+  draw(entries);
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase();
+    draw(entries.filter(e => e.title.toLowerCase().includes(q)));
+  });
+}
+
+/* ---------- Detail view ---------- */
+async function renderDetail(slug){
+  setChrome({ title: 'Recipe', showBack: true, showAdd: false });
+  appEl.innerHTML = '<p class="empty">Loading…</p>';
+  let file;
+  try{ file = await gh.getFile(`recipes/${slug}.md`); }
+  catch(e){ appEl.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`; return; }
+  if(!file){ appEl.innerHTML = '<p class="empty">Recipe not found.</p>'; return; }
+
+  const recipe = parseRecipe(file.text);
+  const baseWeight = computeBaseWeight(recipe.ingredients);
+
+  appEl.innerHTML = document.getElementById('tpl-detail').innerHTML;
+  topTitle.textContent = recipe.title;
+  document.getElementById('detailTitle').textContent = recipe.title;
+  const img = appEl.querySelector('.detail-photo img');
+  if(recipe.image){
+    img.src = `https://raw.githubusercontent.com/${getConfig().owner}/${getConfig().repo}/${getConfig().branch||'main'}/recipes/${recipe.image}`;
+  } else {
+    appEl.querySelector('.detail-photo').style.display = 'none';
+  }
+
+  const weightInput = document.getElementById('weightInput');
+  weightInput.value = baseWeight;
+
+  function draw(){
+    const target = Number(weightInput.value) || baseWeight;
+    const factor = target / baseWeight;
+    const scaled = scaleIngredients(recipe.ingredients, factor);
+    const byId = {}; scaled.forEach(i => byId[i.id] = i);
+
+    const ul = document.getElementById('ingredientList');
+    ul.innerHTML = '';
+    scaled.forEach(i => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${escapeHtml(i.name)}</span><span class="ingredient-amount">${amountText(i.amount, i.unit)}</span>`;
+      ul.appendChild(li);
+    });
+
+    const ol = document.getElementById('stepList');
+    ol.innerHTML = '';
+    recipe.steps.forEach(s => {
+      const li = document.createElement('li');
+      li.innerHTML = substitutePlaceholders(escapeHtml(s), byId);
+      ol.appendChild(li);
+    });
+  }
+  draw();
+  weightInput.addEventListener('input', draw);
+  appEl.querySelectorAll('.scale-step').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = Number(btn.dataset.dir);
+      weightInput.value = Math.max(1, (Number(weightInput.value)||baseWeight) + dir*50);
+      draw();
+    });
+  });
+  document.getElementById('resetScaleBtn').addEventListener('click', () => { weightInput.value = baseWeight; draw(); });
+  document.getElementById('editBtn').addEventListener('click', () => { location.hash = `#/edit/${encodeURIComponent(slug)}`; });
+}
+
+/* ---------- Form view (new / edit) ---------- */
+async function renderForm(editSlug){
+  setChrome({ title: editSlug ? 'Edit recipe' : 'New recipe', showBack: true, showAdd: false });
+  appEl.innerHTML = document.getElementById('tpl-form').innerHTML;
+
+  let existing = null, existingSha = null, existingImageSha = null;
+  if(editSlug){
+    const file = await gh.getFile(`recipes/${editSlug}.md`);
+    if(file){ existing = parseRecipe(file.text); existingSha = file.sha; }
+    document.getElementById('deleteBtn').hidden = false;
+  }
+
+  document.getElementById('f-title').value = existing ? existing.title : '';
+  let imageBase64 = null, imageChanged = false;
+  if(existing && existing.image){
+    const prev = document.getElementById('f-imagePreview');
+    prev.src = `https://raw.githubusercontent.com/${getConfig().owner}/${getConfig().repo}/${getConfig().branch||'main'}/recipes/${existing.image}`;
+    prev.hidden = false;
+  }
+  document.getElementById('f-image').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const { base64, dataUrl } = await compressImage(file);
+    imageBase64 = base64; imageChanged = true;
+    const prev = document.getElementById('f-imagePreview');
+    prev.src = dataUrl; prev.hidden = false;
+  });
+
+  const rowsEl = document.getElementById('ingredientRows');
+  const chipsEl = document.getElementById('ingredientChips');
+  const stepsEl = document.getElementById('stepRows');
+  let lastFocusedStep = null;
+
+  function addIngredientRow(data){
+    const row = document.createElement('div');
+    row.className = 'ingredient-row';
+    row.innerHTML = `
+      <input type="text" class="ing-name" placeholder="Name" value="${data ? escapeHtml(data.name) : ''}">
+      <input type="number" step="any" class="ing-amount" placeholder="Amt" value="${data ? data.amount : ''}">
+      <select class="ing-unit">
+        ${['g','kg','ml','l','tsp','tbsp','cup','pcs'].map(u => `<option value="${u}" ${data && data.unit===u?'selected':''}>${u}</option>`).join('')}
+      </select>
+      <button type="button" class="rowremove">&times;</button>`;
+    row.querySelector('.rowremove').addEventListener('click', () => { row.remove(); refreshChips(); });
+    row.querySelector('.ing-name').addEventListener('input', refreshChips);
+    rowsEl.appendChild(row);
+    refreshChips();
+  }
+
+  function currentIngredients(){
+    return [...rowsEl.querySelectorAll('.ingredient-row')].map(row => {
+      const name = row.querySelector('.ing-name').value.trim();
+      return {
+        name,
+        id: slugify(name),
+        amount: Number(row.querySelector('.ing-amount').value) || 0,
+        unit: row.querySelector('.ing-unit').value
+      };
+    }).filter(i => i.name);
+  }
+
+  function refreshChips(){
+    const ings = currentIngredients();
+    chipsEl.innerHTML = '';
+    ings.forEach(i => {
+      const chip = document.createElement('button');
+      chip.type = 'button'; chip.className = 'chip'; chip.textContent = `{${i.id}}`;
+      chip.addEventListener('click', () => {
+        const ta = lastFocusedStep || stepsEl.querySelector('textarea');
+        if(!ta) return;
+        const start = ta.selectionStart ?? ta.value.length;
+        const end = ta.selectionEnd ?? ta.value.length;
+        ta.value = ta.value.slice(0, start) + `{${i.id}}` + ta.value.slice(end);
+        ta.focus();
+      });
+      chipsEl.appendChild(chip);
+    });
+  }
+
+  function addStepRow(text){
+    const row = document.createElement('div');
+    row.className = 'step-row';
+    const num = document.createElement('span');
+    num.className = 'step-num';
+    const ta = document.createElement('textarea');
+    ta.value = text || '';
+    ta.placeholder = 'Describe this step…';
+    ta.addEventListener('focus', () => { lastFocusedStep = ta; });
+    const rm = document.createElement('button');
+    rm.type = 'button'; rm.className = 'rowremove'; rm.innerHTML = '&times;';
+    rm.addEventListener('click', () => { row.remove(); renumberSteps(); });
+    row.append(num, ta, rm);
+    stepsEl.appendChild(row);
+    renumberSteps();
+  }
+  function renumberSteps(){
+    [...stepsEl.querySelectorAll('.step-row')].forEach((row, idx) => { row.querySelector('.step-num').textContent = idx+1; });
+  }
+
+  if(existing){
+    existing.ingredients.forEach(addIngredientRow);
+    existing.steps.forEach(addStepRow);
+  } else {
+    addIngredientRow(); addStepRow();
+  }
+
+  document.getElementById('addIngredientBtn').addEventListener('click', () => addIngredientRow());
+  document.getElementById('addStepBtn').addEventListener('click', () => addStepRow());
+
+  document.getElementById('recipeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('formStatus');
+    status.hidden = false; status.className = 'form-status'; status.textContent = 'Saving…';
+    try{
+      const title = document.getElementById('f-title').value.trim();
+      const ingredients = currentIngredients();
+      const steps = [...stepsEl.querySelectorAll('textarea')].map(t => t.value.trim()).filter(Boolean);
+      if(!title) throw new Error('Title is required.');
+      if(ingredients.length === 0) throw new Error('Add at least one ingredient.');
+      if(steps.length === 0) throw new Error('Add at least one step.');
+
+      const idx = await getIndex();
+      let slug = editSlug;
+      if(!slug){
+        slug = await uniqueSlug(slugify(title), idx.entries.map(e => e.slug));
+      }
+
+      let imagePath = existing ? existing.image : '';
+      if(imageChanged && imageBase64){
+        imagePath = `images/${slug}.jpg`;
+        const existingImgFile = await gh.getFile(`recipes/${imagePath}`).catch(() => null);
+        await gh.putImage(`recipes/${imagePath}`, imageBase64, `Add photo for ${title}`, existingImgFile ? existingImgFile.sha : undefined);
+      }
+
+      const recipeObj = { title, image: imagePath, ingredients, steps };
+      const raw = serializeRecipe(recipeObj);
+      await gh.putFile(`recipes/${slug}.md`, raw, editSlug ? `Update ${title}` : `Add ${title}`, existingSha || undefined);
+
+      const baseWeightGrams = computeBaseWeight(ingredients);
+      const newEntry = { slug, title, image: imagePath, baseWeightGrams };
+      let entries = idx.entries.filter(e => e.slug !== slug);
+      entries.push(newEntry);
+      entries.sort((a,b) => a.title.localeCompare(b.title));
+      await saveIndex(entries, idx.sha);
+
+      status.className = 'form-status success'; status.textContent = 'Saved!';
+      location.hash = `#/r/${encodeURIComponent(slug)}`;
+    }catch(err){
+      status.className = 'form-status error'; status.textContent = err.message;
+    }
+  });
+
+  document.getElementById('deleteBtn').addEventListener('click', async () => {
+    if(!confirm('Delete this recipe? This cannot be undone.')) return;
+    try{
+      const file = await gh.getFile(`recipes/${editSlug}.md`);
+      if(file) await gh.deleteFile(`recipes/${editSlug}.md`, `Delete ${existing.title}`, file.sha);
+      const idx = await getIndex();
+      const entries = idx.entries.filter(e => e.slug !== editSlug);
+      await saveIndex(entries, idx.sha);
+      location.hash = '#/';
+    }catch(err){ alert(err.message); }
+  });
+}
+
+/* ---------- Settings view ---------- */
+function renderSettings(){
+  setChrome({ title: 'Settings', showBack: configReady(), showAdd: false });
+  appEl.innerHTML = document.getElementById('tpl-settings').innerHTML;
+  const cfg = getConfig() || {};
+  document.getElementById('s-owner').value = cfg.owner || '';
+  document.getElementById('s-repo').value = cfg.repo || '';
+  document.getElementById('s-branch').value = cfg.branch || 'main';
+  document.getElementById('s-token').value = cfg.token || '';
+
+  document.getElementById('settingsForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    setConfig({
+      owner: document.getElementById('s-owner').value.trim(),
+      repo: document.getElementById('s-repo').value.trim(),
+      branch: document.getElementById('s-branch').value.trim() || 'main',
+      token: document.getElementById('s-token').value.trim()
+    });
+    const status = document.getElementById('settingsStatus');
+    status.hidden = false; status.className = 'form-status success'; status.textContent = 'Saved.';
+    setTimeout(() => { location.hash = '#/'; }, 500);
+  });
+}
+
+render();
+
+/* ---------- PWA install (optional, no-op if unsupported) ---------- */
+if('serviceWorker' in navigator){
+  // Intentionally no service worker registered: keeps this app simple and
+  // always fetches the latest recipe data instead of caching it.
+}
