@@ -6,10 +6,52 @@
     "baseWeightGrams": 1033
   },
   {
+    "slug": "cream-cheese-taart",
+    "title": "Cream Cheese Taart",
+    "image": "images/cream-cheese-taart.jpg",
+    "baseWeightGrams": 1700
+  },
+  {
+    "slug": "franse-custard-appeltaart",
+    "title": "Franse Custard Appeltaart",
+    "image": "images/franse-custard-appeltaart.jpg",
+    "baseWeightGrams": 278
+  },
+  {
+    "slug": "omas-tulband",
+    "title": "Oma's Tulband",
+    "image": "images/omas-tulband.jpg",
+    "baseWeightGrams": 1178
+  },
+  {
     "slug": "example-pancakes",
     "title": "Pancakes",
     "image": "",
     "baseWeightGrams": 250
+  },
+  {
+    "slug": "pavlova",
+    "title": "Pavlova",
+    "image": "images/pavlova.jpg",
+    "baseWeightGrams": 1441
+  },
+  {
+    "slug": "quiche-zalm-dille",
+    "title": "Quiche met Gerookte Zalm en Dille",
+    "image": "images/quiche-zalm-dille.jpg",
+    "baseWeightGrams": 320
+  },
+  {
+    "slug": "rabarber-flantaart",
+    "title": "Rabarber Flantaart",
+    "image": "images/rabarber-flantaart.jpg",
+    "baseWeightGrams": 977
+  },
+  {
+    "slug": "tiramisu",
+    "title": "Tiramisu",
+    "image": "images/tiramisu.jpg",
+    "baseWeightGrams": 869
   },
   {
     "slug": "wortelcake-gember-speculaas",
