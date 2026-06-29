@@ -162,7 +162,11 @@ h1,h2,h3{margin:0; font-family:var(--font);}
   width:26px; height:26px; min-width:26px; border-radius:var(--r-full); display:flex; align-items:center; justify-content:center;
   font-size:13px;
 }
+/* The whole step text as one flex item so it flows as a normal sentence;
+   min-width:0 lets it shrink/wrap instead of forcing its words into columns. */
+.step-text{flex:1; min-width:0;}
 .step-amt{font-weight:600; color:var(--ink);}
+.step-amt-num{white-space:nowrap;}
 
 .detail-actions{margin-top:var(--sp-xl); display:flex; justify-content:center;}
 

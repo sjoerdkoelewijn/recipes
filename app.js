@@ -138,7 +138,8 @@ function substitutePlaceholders(text, scaledById){
     const ing = scaledById[id];
     if(!ing) return whole;
     const lowerName = ing.name.charAt(0).toLowerCase() + ing.name.slice(1);
-    return `<span class="step-amt">${amountText(ing.amount, ing.unit)} ${lowerName}</span>`;
+    // Keep the number+unit on one line; let the name wrap if space is tight.
+    return `<span class="step-amt"><span class="step-amt-num">${amountText(ing.amount, ing.unit)}</span> ${escapeHtml(lowerName)}</span>`;
   });
 }
 
@@ -321,7 +322,10 @@ async function renderDetail(slug){
     ol.innerHTML = '';
     recipe.steps.forEach(s => {
       const li = document.createElement('li');
-      li.innerHTML = substitutePlaceholders(escapeHtml(s), byId);
+      // Wrap the text in a single element so the <li> flex layout has just
+      // two items (number + text); otherwise each amount span becomes its
+      // own flex item and the words stack into columns on narrow screens.
+      li.innerHTML = `<span class="step-text">${substitutePlaceholders(escapeHtml(s), byId)}</span>`;
       ol.appendChild(li);
     });
   }
