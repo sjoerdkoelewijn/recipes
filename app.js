@@ -471,6 +471,8 @@ async function renderForm(editSlug){
   function addIngredientRow(data){
     const row = document.createElement('div');
     row.className = 'ingredient-row';
+    // Remember an existing ingredient's id so it stays stable across renames.
+    if(data && data.id) row.dataset.ingId = data.id;
     row.innerHTML = `
       <input type="text" class="ing-name" placeholder="Naam" value="${data ? escapeHtml(data.name) : ''}">
       <input type="number" step="any" class="ing-amount" placeholder="Hvh" value="${data ? data.amount : ''}">
@@ -485,15 +487,27 @@ async function renderForm(editSlug){
   }
 
   function currentIngredients(){
-    return [...rowsEl.querySelectorAll('.ingredient-row')].map(row => {
+    const rows = [...rowsEl.querySelectorAll('.ingredient-row')]
+      .filter(r => r.querySelector('.ing-name').value.trim());
+    // Reserve the stable ids of existing ingredients first, then derive a
+    // fresh, collision-free id for any brand-new ingredient from its name.
+    const used = new Set();
+    rows.forEach(r => { if(r.dataset.ingId) used.add(r.dataset.ingId); });
+    return rows.map(row => {
       const name = row.querySelector('.ing-name').value.trim();
+      let id = row.dataset.ingId;
+      if(!id){
+        let base = slugify(name) || 'ingredient', candidate = base, n = 2;
+        while(used.has(candidate)) candidate = `${base}-${n++}`;
+        id = candidate; used.add(id);
+      }
       return {
         name,
-        id: slugify(name),
+        id,
         amount: Number(row.querySelector('.ing-amount').value) || 0,
         unit: row.querySelector('.ing-unit').value
       };
-    }).filter(i => i.name);
+    });
   }
 
   function refreshChips(){
