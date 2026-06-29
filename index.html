@@ -26,8 +26,14 @@
 <button id="addBtn" class="fab" aria-label="New recipe">+</button>
 
 <template id="tpl-list">
-  <div class="searchwrap">
-    <input id="searchInput" type="search" placeholder="Search recipes…" autocomplete="off">
+  <div class="searchwrap" data-expanded="false">
+    <button id="searchToggle" class="searchtoggle" type="button" aria-label="Search recipes" aria-expanded="false">
+      <svg class="searchtoggle-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+      </svg>
+    </button>
+    <input id="searchInput" type="search" placeholder="Search recipes…" autocomplete="off" hidden>
   </div>
   <div id="cardGrid" class="card-grid"></div>
   <p id="emptyState" class="empty" hidden>No recipes yet. Tap + to add your first one.</p>

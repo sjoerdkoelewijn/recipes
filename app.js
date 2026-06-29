@@ -173,6 +173,20 @@ function compressImage(file, maxWidth=1200, quality=0.82){
 }
 function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+/* Placeholder shown when a recipe has no photo (or its photo fails to load):
+   a neutral plate with a steaming bowl, drawn inline so no asset is needed. */
+const FALLBACK_IMG = 'data:image/svg+xml,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">` +
+  `<rect width="400" height="400" fill="#f2f2f2"/>` +
+  `<g fill="none" stroke="#c4c4c4" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">` +
+  `<path d="M112 214h176"/>` +
+  `<path d="M126 214a74 74 0 0 0 148 0"/>` +
+  `<path d="M176 150c0-16 12-22 12-40m24 40c0-16 12-22 12-40"/>` +
+  `</g></svg>`
+);
+// Point an <img> at the fallback and keep it there even if a later src 404s.
+function useFallback(img){ img.onerror = () => { img.onerror = null; img.src = FALLBACK_IMG; }; }
+
 /* ---------- Router ---------- */
 const appEl = document.getElementById('app');
 const topTitle = document.getElementById('topTitle');
@@ -232,7 +246,9 @@ async function renderList(){
       const a = node.querySelector('a');
       a.href = `#/r/${encodeURIComponent(entry.slug)}`;
       const img = node.querySelector('img');
+      useFallback(img);
       if(entry.image){ const c = repoCfg(); img.src = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${c.branch}/recipes/${entry.image}`; }
+      else { img.src = FALLBACK_IMG; }
       node.querySelector('h3').textContent = entry.title;
       node.querySelector('.weight-pill').textContent = `${entry.baseWeightGrams} g`;
       grid.appendChild(node);
@@ -243,6 +259,21 @@ async function renderList(){
     const q = search.value.toLowerCase();
     draw(entries.filter(e => e.title.toLowerCase().includes(q)));
   });
+
+  // Search stays hidden behind its icon until tapped; Escape or an empty
+  // blur collapses it again and clears any active filter.
+  const searchWrap = appEl.querySelector('.searchwrap');
+  const searchToggle = document.getElementById('searchToggle');
+  function setSearchOpen(open){
+    searchWrap.dataset.expanded = open ? 'true' : 'false';
+    searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    search.hidden = !open;
+    if(open){ search.focus(); }
+    else if(search.value){ search.value = ''; draw(entries); }
+  }
+  searchToggle.addEventListener('click', () => setSearchOpen(true));
+  search.addEventListener('keydown', (e) => { if(e.key === 'Escape') setSearchOpen(false); });
+  search.addEventListener('blur', () => { if(!search.value) setSearchOpen(false); });
 }
 
 /* ---------- Detail view ---------- */
@@ -261,11 +292,12 @@ async function renderDetail(slug){
   topTitle.textContent = recipe.title;
   document.getElementById('detailTitle').textContent = recipe.title;
   const img = appEl.querySelector('.detail-photo img');
+  useFallback(img);
   if(recipe.image){
     const c = repoCfg();
     img.src = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${c.branch}/recipes/${recipe.image}`;
   } else {
-    appEl.querySelector('.detail-photo').style.display = 'none';
+    img.src = FALLBACK_IMG;
   }
 
   const weightInput = document.getElementById('weightInput');
