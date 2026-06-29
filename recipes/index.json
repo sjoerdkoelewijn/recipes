@@ -4,5 +4,11 @@
     "title": "Pancakes",
     "image": "",
     "baseWeightGrams": 250
+  },
+  {
+    "slug": "wortelcake-gember-speculaas",
+    "title": "Wortelcake met Gember en Speculaas",
+    "image": "images/wortelcake-gember-speculaas.jpg",
+    "baseWeightGrams": 1502
   }
 ]
