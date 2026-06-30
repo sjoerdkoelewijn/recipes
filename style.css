@@ -85,7 +85,7 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 .card{
   display:flex; gap:var(--sp-md); align-items:center; text-decoration:none; color:var(--ink);
   background:var(--canvas); border-radius:var(--r-md); padding:var(--sp-sm);
-  border:1px solid #D5D5D5; transition:transform .12s ease;
+  border:1px solid #EBEBEB; transition:transform .12s ease;
 }
 .card:active{transform:scale(0.98);}
 .card-img{width:72px; height:72px; border-radius:var(--r-md); overflow:hidden; flex-shrink:0; background:var(--surface-strong);}
