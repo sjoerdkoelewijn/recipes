@@ -217,11 +217,17 @@ function amountText(amount, unit){
 function scaleIngredients(ingredients, factor){
   return ingredients.map(i => ({ ...i, amount: i.amount * factor }));
 }
+// Drop parenthetical notes like "(bestellen bij de bakker)" — useful in the
+// ingredient list, but redundant when the name is woven into a step.
+function stripParenthetical(name){
+  return name.replace(/\s*\([^)]*\)/g, '').trim();
+}
 function substitutePlaceholders(text, scaledById){
   return text.replace(/\{([a-zA-Z0-9_-]+)\}/g, (whole, id) => {
     const ing = scaledById[id];
     if(!ing) return whole;
-    const lowerName = ing.name.charAt(0).toLowerCase() + ing.name.slice(1);
+    const shortName = stripParenthetical(ing.name) || ing.name;
+    const lowerName = shortName.charAt(0).toLowerCase() + shortName.slice(1);
     // Keep the number+unit on one line; let the name wrap if space is tight.
     return `<span class="step-amt"><span class="step-amt-num">${amountText(ing.amount, ing.unit)}</span> ${escapeHtml(lowerName)}</span>`;
   });
