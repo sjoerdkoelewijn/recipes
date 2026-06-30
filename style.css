@@ -275,12 +275,41 @@ h1,h2,h3{margin:0; font-family:var(--font);}
   background:none; color:var(--error); border:none; border-radius:var(--r-sm); padding:13px 18px;
   font-size:14px; font-weight:500; cursor:pointer; font-family:var(--font); text-decoration:underline;
 }
-.form-actions{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:var(--sp-xs);}
+/* Recipe form: delete stays in the flow (stacked); save is a fixed bottom bar. */
+.recipe-form .dangerbtn{align-self:center; margin-top:var(--sp-sm);}
+.form-savebar{
+  position:fixed; left:0; right:0; bottom:0; z-index:15;
+  background:var(--canvas); border-top:1px solid var(--hairline);
+  padding:10px var(--sp-base) calc(10px + env(safe-area-inset-bottom));
+  display:flex; flex-direction:column; align-items:center; gap:var(--sp-xs);
+}
+.form-savebar .primarybtn{width:100%; max-width:560px;}
+.form-savebar .form-status{margin:0;}
 .form-status{font-size:14px; color:var(--muted); text-align:center;}
 .form-status.error{color:var(--error);}
 .form-status.success{color:var(--ink); font-weight:600;}
 .hint{font-size:13px; color:var(--muted); margin:0; line-height:1.4;}
 
+/* ---- "Voeg toe als app" banner (browser only, hidden in installed app) ---- */
+.install-banner{
+  display:block; width:100%; border:none; cursor:pointer;
+  background:var(--rausch); color:#fff;
+  font-family:var(--font); font-size:14px; font-weight:600;
+  padding:10px var(--sp-base); text-align:center;
+}
+.install-banner:active{background:var(--rausch-active);}
+
+/* ---- Toast (e.g. "Link gekopieerd") ---- */
+.toast{
+  position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(10px);
+  background:var(--ink); color:#fff; font-size:14px; font-weight:500;
+  padding:10px 18px; border-radius:var(--r-full); box-shadow:var(--shadow-1);
+  opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;
+  z-index:40; max-width:80%; text-align:center;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
 @media (prefers-reduced-motion: reduce){
   .card{transition:none;}
+  .toast{transition:none;}
 }

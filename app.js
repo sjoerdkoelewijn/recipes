@@ -123,7 +123,7 @@ const TAG_GROUPS = [
     { value: 'zoet', label: 'Zoet' }
   ]},
   { label: 'Dieet', tags: [
-    { value: 'fodmap-friendly', label: 'Fodmap Friendly' },
+    { value: 'fodmap', label: 'Fodmap' },
     { value: 'vega', label: 'Vega' }
   ]}
 ];
@@ -291,6 +291,7 @@ const searchInput = document.getElementById('searchInput');
 
 const settingsBtn = document.getElementById('settingsBtn');
 const gotoSettingsBtn = document.getElementById('gotoSettingsBtn');
+const shareBtn = document.getElementById('shareBtn');
 const filterPanel = document.getElementById('filterPanel');
 const filterGroups = document.getElementById('filterGroups');
 const topbarEl = document.querySelector('.topbar');
@@ -301,6 +302,53 @@ window.addEventListener('hashchange', render);
 backBtn.addEventListener('click', () => { location.hash = '#/'; });
 addBtn.addEventListener('click', () => { location.hash = '#/new'; });
 gotoSettingsBtn.addEventListener('click', () => { location.hash = '#/settings'; });
+
+/* ---- Brief toast message (e.g. "Link gekopieerd") ---- */
+let toastTimer = null;
+function showToast(message){
+  let el = document.getElementById('toast');
+  if(!el){ el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+/* ---- Share: copy the current recipe's deep link to the clipboard ---- */
+shareBtn.addEventListener('click', async () => {
+  const url = location.href;
+  try{
+    await navigator.clipboard.writeText(url);
+    showToast('Link gekopieerd');
+  }catch(e){
+    // Fallback for browsers without clipboard API / permission.
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); showToast('Link gekopieerd'); }
+    catch(_){ showToast('Kopiëren mislukt'); }
+    ta.remove();
+  }
+});
+
+/* ---- "Voeg toe als app" banner: only in a browser, not the installed app ---- */
+const installBanner = document.getElementById('installBanner');
+let deferredInstallPrompt = null;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+if(!isStandalone){ installBanner.hidden = false; }
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstallPrompt = e; });
+installBanner.addEventListener('click', async () => {
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    if(outcome === 'accepted') installBanner.hidden = true;
+  }else{
+    // iOS / unsupported: no programmatic install, so guide the user.
+    showToast('Tik op Delen → Zet op beginscherm');
+  }
+});
+window.addEventListener('appinstalled', () => { installBanner.hidden = true; });
 
 /* ---- Top-bar search: icon expands the input across the bar ---- */
 function openSearch(){
@@ -331,7 +379,7 @@ document.addEventListener('click', (e) => {
 });
 buildTagGroups(filterGroups, activeTags, () => { if(redrawList) redrawList(); });
 
-function setChrome({ title, showBack, showAdd, showSearch, showFilter, showSettings, logo }){
+function setChrome({ title, showBack, showAdd, showSearch, showFilter, showSettings, showShare, logo }){
   // The home view shows the wordmark logo; other views show a text title.
   topLogo.hidden = !logo;
   topTitleText.textContent = logo ? '' : title;
@@ -340,6 +388,7 @@ function setChrome({ title, showBack, showAdd, showSearch, showFilter, showSetti
   navSearchBtn.hidden = !showSearch;
   settingsBtn.hidden = !showFilter;
   gotoSettingsBtn.hidden = !showSettings;
+  shareBtn.hidden = !showShare;
   // Collapse search / filter whenever we leave a view that uses them.
   if(!showSearch){ navSearch.dataset.open = 'false'; navSearchBtn.setAttribute('aria-expanded', 'false'); searchInput.value = ''; }
   if(!showFilter){ closeFilter(); }
@@ -432,7 +481,7 @@ async function renderList(){
 
 /* ---------- Detail view ---------- */
 async function renderDetail(slug){
-  setChrome({ title: 'Recept', showBack: true, showAdd: false });
+  setChrome({ title: 'Recept', showBack: true, showAdd: false, showShare: true });
   appEl.innerHTML = '<p class="empty">Laden…</p>';
   let file;
   try{ file = await gh.getFile(`recipes/${slug}.md`); }
