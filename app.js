@@ -39,7 +39,10 @@ const gh = {
   },
   async getFile(path){
     const c = repoCfg();
-    const res = await fetch(`${this.apiBase()}/contents/${path}?ref=${c.branch||'main'}`, { headers: this.headers(false) });
+    // Cache-bust (unique query + no-store) so a freshly added or edited recipe
+    // shows up immediately instead of a stale browser/CDN copy of index.json.
+    const url = `${this.apiBase()}/contents/${path}?ref=${c.branch||'main'}&t=${Date.now()}`;
+    const res = await fetch(url, { headers: this.headers(false), cache: 'no-store' });
     if(res.status === 404) return null;
     if(!res.ok) throw new Error(`GitHub read failed (${res.status})`);
     const data = await res.json();
