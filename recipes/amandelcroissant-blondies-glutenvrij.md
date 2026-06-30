@@ -4,7 +4,7 @@
   "image": "images/amandelcroissant-blondies-glutenvrij.jpg",
   "tags": [
     "zoet",
-    "fodmap-friendly",
+    "fodmap",
     "vega"
   ],
   "ingredients": [
