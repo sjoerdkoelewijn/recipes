@@ -115,9 +115,56 @@ function serializeRecipe(r){
   return `---\n${JSON.stringify(meta, null, 2)}\n---\n\n${stepsText}\n`;
 }
 
-/* Known recipe tags, in display order. */
-const ALL_TAGS = ['hartig', 'zoet'];
-function tagLabel(t){ return t.charAt(0).toUpperCase() + t.slice(1); }
+/* Recipe tags, grouped by category. Stored values are the slugs; labels are
+   for display. Filtering is OR within a group and AND across groups. */
+const TAG_GROUPS = [
+  { label: 'Type', tags: [
+    { value: 'hartig', label: 'Hartig' },
+    { value: 'zoet', label: 'Zoet' }
+  ]},
+  { label: 'Dieet', tags: [
+    { value: 'fodmap-friendly', label: 'Fodmap Friendly' },
+    { value: 'vega', label: 'Vega' }
+  ]}
+];
+const ALL_TAGS = TAG_GROUPS.flatMap(g => g.tags.map(t => t.value));
+const TAG_LABELS = {};
+TAG_GROUPS.forEach(g => g.tags.forEach(t => { TAG_LABELS[t.value] = t.label; }));
+function tagLabel(t){ return TAG_LABELS[t] || (t.charAt(0).toUpperCase() + t.slice(1)); }
+
+/* Render the grouped tag chips into a container. Toggling a chip updates the
+   given Set; onToggle (optional) fires after each change. Reused by the
+   recipe form and the overview filter panel. */
+function buildTagGroups(container, selectedSet, onToggle){
+  container.innerHTML = '';
+  TAG_GROUPS.forEach(group => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tag-group';
+    const label = document.createElement('span');
+    label.className = 'tag-group-label';
+    label.textContent = group.label;
+    const row = document.createElement('div');
+    row.className = 'tag-select';
+    group.tags.forEach(t => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'tag-chip' + (selectedSet.has(t.value) ? ' selected' : '');
+      chip.dataset.tag = t.value;
+      chip.textContent = t.label;
+      chip.setAttribute('aria-pressed', selectedSet.has(t.value) ? 'true' : 'false');
+      chip.addEventListener('click', () => {
+        if(selectedSet.has(t.value)) selectedSet.delete(t.value); else selectedSet.add(t.value);
+        const on = selectedSet.has(t.value);
+        chip.classList.toggle('selected', on);
+        chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+        if(onToggle) onToggle();
+      });
+      row.appendChild(chip);
+    });
+    wrap.append(label, row);
+    container.appendChild(wrap);
+  });
+}
 
 /* A sample recipe used for the downloadable .md template. Serialized with the
    same serializeRecipe() the app writes with, so the example always matches
@@ -239,7 +286,7 @@ const searchInput = document.getElementById('searchInput');
 const settingsBtn = document.getElementById('settingsBtn');
 const gotoSettingsBtn = document.getElementById('gotoSettingsBtn');
 const filterPanel = document.getElementById('filterPanel');
-const filterChips = document.getElementById('filterChips');
+const filterGroups = document.getElementById('filterGroups');
 const topbarEl = document.querySelector('.topbar');
 const activeTags = new Set();      // tags currently filtered on
 let redrawList = null;             // set by renderList so the filter can re-apply
@@ -276,19 +323,7 @@ settingsBtn.addEventListener('click', () => { filterPanel.dataset.open === 'true
 document.addEventListener('click', (e) => {
   if(filterPanel.dataset.open === 'true' && !filterPanel.contains(e.target) && !settingsBtn.contains(e.target)) closeFilter();
 });
-ALL_TAGS.forEach(tag => {
-  const chip = document.createElement('button');
-  chip.type = 'button'; chip.className = 'tag-chip';
-  chip.textContent = tagLabel(tag); chip.setAttribute('aria-pressed', 'false');
-  chip.addEventListener('click', () => {
-    if(activeTags.has(tag)) activeTags.delete(tag); else activeTags.add(tag);
-    const on = activeTags.has(tag);
-    chip.classList.toggle('selected', on);
-    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
-    if(redrawList) redrawList();
-  });
-  filterChips.appendChild(chip);
-});
+buildTagGroups(filterGroups, activeTags, () => { if(redrawList) redrawList(); });
 
 function setChrome({ title, showBack, showAdd, showSearch, showFilter, showSettings, logo }){
   // The home view shows the wordmark logo; other views show a text title.
@@ -366,7 +401,13 @@ async function renderList(){
     const q = searchInput.value.trim().toLowerCase();
     const list = entries.filter(e => {
       const matchesText = !q || e.title.toLowerCase().includes(q);
-      const matchesTags = activeTags.size === 0 || (e.tags || []).some(t => activeTags.has(t));
+      const rt = e.tags || [];
+      // OR within a group, AND across groups: each group that has a selection
+      // must be satisfied by at least one of the recipe's tags.
+      const matchesTags = TAG_GROUPS.every(group => {
+        const sel = group.tags.map(t => t.value).filter(v => activeTags.has(v));
+        return sel.length === 0 || sel.some(v => rt.includes(v));
+      });
       return matchesText && matchesTags;
     });
     draw(list);
@@ -487,24 +528,10 @@ async function renderForm(editSlug){
     prev.src = dataUrl; prev.hidden = false;
   });
 
-  // Tag selection: toggle chips for each known tag.
+  // Tag selection: grouped toggle chips (Type, Dieet).
   const selectedTags = new Set(existing && existing.tags ? existing.tags : []);
-  const tagChipsEl = document.getElementById('tagChips');
-  ALL_TAGS.forEach(tag => {
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'tag-chip' + (selectedTags.has(tag) ? ' selected' : '');
-    chip.dataset.tag = tag;
-    chip.textContent = tagLabel(tag);
-    chip.setAttribute('aria-pressed', selectedTags.has(tag) ? 'true' : 'false');
-    chip.addEventListener('click', () => {
-      if(selectedTags.has(tag)) selectedTags.delete(tag); else selectedTags.add(tag);
-      const on = selectedTags.has(tag);
-      chip.classList.toggle('selected', on);
-      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
-    tagChipsEl.appendChild(chip);
-  });
+  const tagGroupsEl = document.getElementById('tagGroups');
+  buildTagGroups(tagGroupsEl, selectedTags);
 
   const rowsEl = document.getElementById('ingredientRows');
   const chipsEl = document.getElementById('ingredientChips');
@@ -608,11 +635,7 @@ async function renderForm(editSlug){
     document.getElementById('f-title').value = r.title || '';
     selectedTags.clear();
     (r.tags || []).forEach(t => selectedTags.add(t));
-    tagChipsEl.querySelectorAll('.tag-chip').forEach(chip => {
-      const on = selectedTags.has(chip.dataset.tag);
-      chip.classList.toggle('selected', on);
-      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
+    buildTagGroups(tagGroupsEl, selectedTags);
     rowsEl.innerHTML = '';
     (r.ingredients && r.ingredients.length ? r.ingredients : [undefined]).forEach(addIngredientRow);
     stepsEl.innerHTML = '';

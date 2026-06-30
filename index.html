@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -68,8 +68,7 @@
 </header>
 
 <div id="filterPanel" class="filter-panel" data-open="false">
-  <span class="filter-heading">Filter op</span>
-  <div id="filterChips" class="tag-select"></div>
+  <div id="filterGroups" class="tag-groups"></div>
 </div>
 
 <main id="app"></main>
@@ -151,7 +150,7 @@
 
     <div class="field">
       <span>Tags</span>
-      <div id="tagChips" class="tag-select"></div>
+      <div id="tagGroups" class="tag-groups"></div>
     </div>
 
     <h3 class="section-heading">Ingrediënten</h3>
@@ -198,6 +197,6 @@
   </form>
 </template>
 
-<script src="app.js?v=10"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>

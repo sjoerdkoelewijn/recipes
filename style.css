@@ -237,7 +237,10 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 }
 .chip:active{background:var(--surface-strong);}
 
-/* ---- Tag chips (recipe form + filter panel) ---- */
+/* ---- Tag chips, grouped by category (recipe form + filter panel) ---- */
+.tag-groups{display:flex; flex-direction:column; gap:var(--sp-md);}
+.tag-group{display:flex; flex-direction:column; gap:var(--sp-sm);}
+.tag-group-label{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
 .tag-select{display:flex; flex-wrap:wrap; gap:var(--sp-sm);}
 .tag-chip{
   font-size:14px; font-weight:500; font-family:var(--font);
@@ -255,7 +258,6 @@ h1,h2,h3{margin:0; font-family:var(--font);}
   box-shadow:var(--shadow-1); padding:var(--sp-base); min-width:200px;
 }
 .filter-panel[data-open="true"]{display:flex;}
-.filter-heading{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
 
 /* ---- Buttons ---- */
 .primarybtn{
