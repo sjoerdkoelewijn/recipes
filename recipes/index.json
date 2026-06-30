@@ -1,10 +1,12 @@
 [
   {
     "slug": "amandelcroissant-blondies-glutenvrij",
-    "title": "Amandelcroissant Blondies (Glutenvrij)",
+    "title": "Amandelcroissant Blondies",
     "image": "images/amandelcroissant-blondies-glutenvrij.jpg",
     "tags": [
-      "zoet"
+      "zoet",
+      "fodmap-friendly",
+      "vega"
     ],
     "baseWeightGrams": 2848
   },
