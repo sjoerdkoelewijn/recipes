@@ -36,6 +36,15 @@
     "baseWeightGrams": 278
   },
   {
+    "slug": "glutenvrije-wortelcake",
+    "title": "Glutenvrije Wortelcake",
+    "image": "images/glutenvrije-wortelcake.jpg",
+    "tags": [
+      "zoet"
+    ],
+    "baseWeightGrams": 1392
+  },
+  {
     "slug": "omas-tulband",
     "title": "Oma's Tulband",
     "image": "images/omas-tulband.jpg",
