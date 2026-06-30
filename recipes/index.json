@@ -47,6 +47,17 @@
     "baseWeightGrams": 1392
   },
   {
+    "slug": "mediterrane-traybake-met-gnocchi",
+    "title": "Mediterrane traybake met gnocchi",
+    "image": "images/mediterrane-traybake-met-gnocchi.jpg",
+    "tags": [
+      "hartig",
+      "fodmap-friendly",
+      "vega"
+    ],
+    "baseWeightGrams": 873
+  },
+  {
     "slug": "oliebollen",
     "title": "Oliebollen",
     "image": "images/oliebollen.jpg",
