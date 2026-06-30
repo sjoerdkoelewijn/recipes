@@ -2,18 +2,71 @@
 {
   "title": "Chocolademousse",
   "image": "images/chocolademousse.jpg",
-  "tags": ["zoet"],
+  "tags": [
+    "zoet",
+    "fodmap"
+  ],
   "ingredients": [
-    { "id": "chocolade", "name": "Pure chocolade (bitterzoet of halfzoet), grof gehakt", "amount": 360, "unit": "g" },
-    { "id": "roomboter", "name": "Ongezouten roomboter, in kleine stukjes", "amount": 340, "unit": "g" },
-    { "id": "koffie", "name": "Sterk gezette koffie", "amount": 120, "unit": "ml" },
-    { "id": "eieren", "name": "Eieren, gesplitst", "amount": 8, "unit": "pcs" },
-    { "id": "suiker_eigeel", "name": "Suiker (voor eigeel)", "amount": 320, "unit": "g" },
-    { "id": "suiker_eiwit", "name": "Suiker (voor eiwit)", "amount": 12, "unit": "g" },
-    { "id": "rum", "name": "Donkere rum", "amount": 30, "unit": "ml" },
-    { "id": "water", "name": "Water", "amount": 15, "unit": "ml" },
-    { "id": "zout", "name": "Zout", "amount": 0.5, "unit": "g" },
-    { "id": "vanille", "name": "Vanille-extract", "amount": 5, "unit": "ml" }
+    {
+      "name": "Pure chocolade (bitterzoet of halfzoet), grof gehakt",
+      "id": "chocolade",
+      "amount": 360,
+      "unit": "g"
+    },
+    {
+      "name": "Ongezouten roomboter, in kleine stukjes",
+      "id": "roomboter",
+      "amount": 340,
+      "unit": "g"
+    },
+    {
+      "name": "Sterk gezette koffie",
+      "id": "koffie",
+      "amount": 120,
+      "unit": "ml"
+    },
+    {
+      "name": "Eieren, gesplitst",
+      "id": "eieren",
+      "amount": 8,
+      "unit": "pcs"
+    },
+    {
+      "name": "Suiker (voor eigeel)",
+      "id": "suiker_eigeel",
+      "amount": 320,
+      "unit": "g"
+    },
+    {
+      "name": "Suiker (voor eiwit)",
+      "id": "suiker_eiwit",
+      "amount": 12,
+      "unit": "g"
+    },
+    {
+      "name": "Donkere rum",
+      "id": "rum",
+      "amount": 30,
+      "unit": "ml"
+    },
+    {
+      "name": "Water",
+      "id": "water",
+      "amount": 15,
+      "unit": "ml"
+    },
+    {
+      "name": "Zout",
+      "id": "zout",
+      "amount": 0.5,
+      "unit": "g"
+    },
+    {
+      "name": "Vanille-extract",
+      "id": "vanille",
+      "amount": 5,
+      "unit": "ml"
+    }
   ]
 }
 ---
