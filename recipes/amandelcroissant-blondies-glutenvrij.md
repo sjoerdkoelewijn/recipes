@@ -9,13 +9,13 @@
   ],
   "ingredients": [
     {
-      "name": "Ongezouten roomboter, zacht (blondie)",
+      "name": "Ongezouten roomboter (blondie)",
       "id": "boter_blondie",
       "amount": 450,
       "unit": "g"
     },
     {
-      "name": "Lichtbruine basterdsuiker, aangedrukt",
+      "name": "Bruine basterdsuiker",
       "id": "suiker_blondie",
       "amount": 800,
       "unit": "g"
