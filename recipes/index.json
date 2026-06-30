@@ -1,16 +1,5 @@
 [
   {
-    "slug": "amandelcroissant-blondies-glutenvrij",
-    "title": "Amandelcroissant Blondies",
-    "image": "images/amandelcroissant-blondies-glutenvrij.jpg",
-    "tags": [
-      "zoet",
-      "fodmap",
-      "vega"
-    ],
-    "baseWeightGrams": 2848
-  },
-  {
     "slug": "chocolademousse",
     "title": "Chocolademousse",
     "image": "images/chocolademousse.jpg",
@@ -27,6 +16,17 @@
       "zoet"
     ],
     "baseWeightGrams": 1700
+  },
+  {
+    "slug": "amandelcroissant-blondies-glutenvrij",
+    "title": "Frangipane Blondies",
+    "image": "images/amandelcroissant-blondies-glutenvrij.jpg",
+    "tags": [
+      "zoet",
+      "fodmap",
+      "vega"
+    ],
+    "baseWeightGrams": 2848
   },
   {
     "slug": "franse-custard-appeltaart",
