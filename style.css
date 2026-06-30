@@ -215,10 +215,11 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 .import-block .hint{flex-basis:100%; margin:0;}
 
 .ingredient-rows, .step-rows{display:flex; flex-direction:column; gap:var(--sp-sm);}
-.ingredient-row{display:grid; grid-template-columns:1fr 64px 76px 32px; gap:6px; align-items:center;}
+.ingredient-row{display:grid; grid-template-columns:1fr 58px 62px 28px; gap:6px; align-items:center;}
 .ingredient-row input, .ingredient-row select{
-  height:auto; padding:9px 8px; font-size:14px; border-radius:var(--r-sm); border:1px solid var(--hairline);
+  width:100%; min-width:0; height:auto; padding:9px 6px; font-size:14px; border-radius:var(--r-sm); border:1px solid var(--hairline);
 }
+.ingredient-row select{padding-left:4px; padding-right:2px;}
 .step-row{display:flex; gap:var(--sp-sm); align-items:flex-start;}
 .step-num{
   font-weight:600; color:#fff; background:var(--ink); border-radius:var(--r-full);
