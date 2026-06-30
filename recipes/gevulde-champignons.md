@@ -1,7 +1,7 @@
 ---
 {
   "title": "Gevulde Champignons",
-  "image": "",
+  "image": "images/gevulde-champignons.jpg",
   "tags": [
     "hartig",
     "fodmap",
@@ -78,4 +78,4 @@
 4. Vul de champignonhoedjes met het mengsel en druk de vulling licht aan.
 5. Leg eventueel een klein beetje {ansjovis} of een stukje {blauwe_kaas} bovenop de gevulde champignons.
 6. Spray de gevulde champignons licht in met de {olijfolie}.
-7. Bak de champignons ongeveer 20 minuten in de oven, tot ze gaar zijn en de bovenkant mooi goudbruin kleurt.
+7. Bak de champignons ongeveer 30 minuten in de oven, tot ze gaar zijn en de bovenkant mooi goudbruin kleurt.
