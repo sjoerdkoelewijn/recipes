@@ -115,6 +115,44 @@ function serializeRecipe(r){
   return `---\n${JSON.stringify(meta, null, 2)}\n---\n\n${stepsText}\n`;
 }
 
+/* Public site root (GitHub Pages). Used to build absolute share/OG URLs. */
+const SITE_BASE = 'https://sjoerdkoelewijn.github.io/recipes';
+function escAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+/* A tiny per-recipe HTML page that carries the recipe's Open Graph tags (so
+   link previews show its title + photo) and then redirects into the app.
+   Scrapers don't run JS, so per-recipe previews need a real HTML file. */
+function buildSharePage(slug, title, imagePath){
+  const t = escAttr(title);
+  const img = escAttr(imagePath ? `${SITE_BASE}/recipes/${imagePath}` : `${SITE_BASE}/og-image.jpg`);
+  const target = `../#/r/${encodeURIComponent(slug)}`;
+  const url = `${SITE_BASE}/r/${encodeURIComponent(slug)}.html`;
+  return `<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>${t} — KoeleKook</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="KoeleKook">
+<meta property="og:title" content="${t}">
+<meta property="og:description" content="Bekijk dit recept op KoeleKook.">
+<meta property="og:url" content="${escAttr(url)}">
+<meta property="og:image" content="${img}">
+<meta property="og:image:alt" content="${t}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${t}">
+<meta name="twitter:description" content="Bekijk dit recept op KoeleKook.">
+<meta name="twitter:image" content="${img}">
+<meta http-equiv="refresh" content="0;url=${target}">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<p>Bezig met laden… <a href="${target}">Open ${t}</a></p>
+<script>location.replace(${JSON.stringify(target)});</script>
+</body>
+</html>
+`;
+}
+
 /* Recipe tags, grouped by category. Stored values are the slugs; labels are
    for display. Filtering is OR within a group and AND across groups. */
 const TAG_GROUPS = [
@@ -314,9 +352,10 @@ function showToast(message){
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
-/* ---- Share: copy the current recipe's deep link to the clipboard ---- */
+/* ---- Share: copy the recipe's share-page link (carries its OG preview) ---- */
 shareBtn.addEventListener('click', async () => {
-  const url = location.href;
+  const m = location.hash.match(/^#\/r\/(.+)$/);
+  const url = m ? `${SITE_BASE}/r/${m[1]}.html` : location.href;
   try{
     await navigator.clipboard.writeText(url);
     showToast('Link gekopieerd');
@@ -761,6 +800,13 @@ async function renderForm(editSlug){
       entries.sort((a,b) => a.title.localeCompare(b.title));
       await saveIndex(entries, idx.sha);
 
+      // Write the per-recipe share page (OG title + photo for link previews).
+      const sharePath = `r/${slug}.html`;
+      const existingShare = await gh.getFile(sharePath).catch(() => null);
+      await gh.putFile(sharePath, buildSharePage(slug, title, imagePath),
+        editSlug ? `Update share page for ${title}` : `Add share page for ${title}`,
+        existingShare ? existingShare.sha : undefined);
+
       status.className = 'form-status success'; status.textContent = 'Opgeslagen!';
       location.hash = `#/r/${encodeURIComponent(slug)}`;
     }catch(err){
@@ -773,6 +819,8 @@ async function renderForm(editSlug){
     try{
       const file = await gh.getFile(`recipes/${editSlug}.md`);
       if(file) await gh.deleteFile(`recipes/${editSlug}.md`, `Delete ${existing.title}`, file.sha);
+      const share = await gh.getFile(`r/${editSlug}.html`).catch(() => null);
+      if(share) await gh.deleteFile(`r/${editSlug}.html`, `Delete share page for ${existing.title}`, share.sha);
       const idx = await getIndex();
       const entries = idx.entries.filter(e => e.slug !== editSlug);
       await saveIndex(entries, idx.sha);
