@@ -4,7 +4,6 @@
   "image": "images/mediterrane-traybake-met-gnocchi.jpg",
   "tags": [
     "hartig",
-    "fodmap-friendly",
     "vega"
   ],
   "ingredients": [
