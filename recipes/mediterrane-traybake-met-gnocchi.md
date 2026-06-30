@@ -1,6 +1,6 @@
 ---
 {
-  "title": "Mediterrane traybake met gnocchi",
+  "title": "Mediterrane traybake",
   "image": "images/mediterrane-traybake-met-gnocchi.jpg",
   "tags": [
     "hartig",
