@@ -45,6 +45,15 @@
     "baseWeightGrams": 1392
   },
   {
+    "slug": "oliebollen",
+    "title": "Oliebollen",
+    "image": "images/oliebollen.jpg",
+    "tags": [
+      "zoet"
+    ],
+    "baseWeightGrams": 1840
+  },
+  {
     "slug": "omas-tulband",
     "title": "Oma's Tulband",
     "image": "images/omas-tulband.jpg",
