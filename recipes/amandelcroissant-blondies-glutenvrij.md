@@ -1,6 +1,6 @@
 ---
 {
-  "title": "Amandelcroissant Blondies",
+  "title": "Frangipane Blondies",
   "image": "images/amandelcroissant-blondies-glutenvrij.jpg",
   "tags": [
     "zoet",
