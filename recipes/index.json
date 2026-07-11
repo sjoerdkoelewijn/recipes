@@ -114,6 +114,16 @@
     "baseWeightGrams": 977
   },
   {
+    "slug": "spaghetti-aglio-e-olio",
+    "title": "Spaghetti Aglio e Olio",
+    "image": "images/spaghetti-aglio-e-olio.jpg",
+    "tags": [
+      "hartig",
+      "vega"
+    ],
+    "baseWeightGrams": 439
+  },
+  {
     "slug": "tiramisu",
     "title": "Tiramisu",
     "image": "images/tiramisu.jpg",
