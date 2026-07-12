@@ -59,6 +59,16 @@
     "baseWeightGrams": 1392
   },
   {
+    "slug": "hike-ontbijt-mix",
+    "title": "Hike Ontbijt Mix",
+    "image": "images/hike-ontbijt-mix.jpg",
+    "tags": [
+      "zoet",
+      "vega"
+    ],
+    "baseWeightGrams": 285
+  },
+  {
     "slug": "mediterrane-traybake-met-gnocchi",
     "title": "Mediterrane traybake",
     "image": "images/mediterrane-traybake-met-gnocchi.jpg",
