@@ -74,4 +74,4 @@
 1. Maal de {havermout} fijn tot een poeder met een blender of keukenmachine.
 2. Meng alle droge ingrediënten goed door elkaar: {pea_protein}, {maltodextrine}, {havermout}, {melkpoeder}, {suiker}, {erythritol}, {lecithine}, {creatine}, {vanille} en {zeezout}.
 3. Doe de mix in een hersluitbaar zakje of bakje voor onderweg.
-4. Voeg op de hike naar smaak koud of warm water toe en roer goed door tot de gewenste dikte.
+4. Voeg op de hike koud water toe en mix het goed door in een shake beker. Let op: niet te veel water, je kan altijd nog meer toevoegen. Check eerst de dikte.
