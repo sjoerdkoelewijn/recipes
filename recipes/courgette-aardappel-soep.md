@@ -14,9 +14,9 @@
       "unit": "pcs"
     },
     {
-      "name": "Aardappelen met schil",
+      "name": "Aardappelen (geschild)",
       "id": "aardappelen",
-      "amount": 800,
+      "amount": 750,
       "unit": "g"
     },
     {
