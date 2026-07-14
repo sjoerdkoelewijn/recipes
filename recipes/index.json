@@ -10,6 +10,16 @@
     "baseWeightGrams": 1033
   },
   {
+    "slug": "courgette-aardappel-soep",
+    "title": "Courgette aardappel soep",
+    "image": "images/courgette-aardappel-soep.jpg",
+    "tags": [
+      "hartig",
+      "vega"
+    ],
+    "baseWeightGrams": 833
+  },
+  {
     "slug": "cream-cheese-taart",
     "title": "Cream Cheese Taart",
     "image": "images/cream-cheese-taart.jpg",
