@@ -7,7 +7,7 @@
       "zoet",
       "fodmap"
     ],
-    "baseWeightGrams": 1033
+    "baseWeightGrams": 1203
   },
   {
     "slug": "courgette-aardappel-soep",
@@ -17,7 +17,7 @@
       "hartig",
       "vega"
     ],
-    "baseWeightGrams": 783
+    "baseWeightGrams": 2213
   },
   {
     "slug": "cream-cheese-taart",
@@ -37,7 +37,7 @@
       "fodmap",
       "vega"
     ],
-    "baseWeightGrams": 2848
+    "baseWeightGrams": 2903
   },
   {
     "slug": "franse-custard-appeltaart",
@@ -46,7 +46,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 278
+    "baseWeightGrams": 1213
   },
   {
     "slug": "gevulde-champignons",
@@ -57,7 +57,7 @@
       "fodmap",
       "vega"
     ],
-    "baseWeightGrams": 616
+    "baseWeightGrams": 631
   },
   {
     "slug": "glutenvrije-wortelcake",
@@ -66,7 +66,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 1392
+    "baseWeightGrams": 1528
   },
   {
     "slug": "hike-ontbijt-mix",
@@ -86,7 +86,7 @@
       "hartig",
       "vega"
     ],
-    "baseWeightGrams": 798
+    "baseWeightGrams": 933
   },
   {
     "slug": "oliebollen",
@@ -95,7 +95,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 1840
+    "baseWeightGrams": 3640
   },
   {
     "slug": "omas-tulband",
@@ -104,7 +104,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 1178
+    "baseWeightGrams": 1318
   },
   {
     "slug": "pavlova",
@@ -113,7 +113,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 1441
+    "baseWeightGrams": 1456
   },
   {
     "slug": "quiche-zalm-dille",
@@ -122,7 +122,7 @@
     "tags": [
       "hartig"
     ],
-    "baseWeightGrams": 320
+    "baseWeightGrams": 370
   },
   {
     "slug": "rabarber-flantaart",
@@ -131,7 +131,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 977
+    "baseWeightGrams": 1322
   },
   {
     "slug": "spaghetti-aglio-e-olio",
@@ -141,7 +141,7 @@
       "hartig",
       "vega"
     ],
-    "baseWeightGrams": 439
+    "baseWeightGrams": 539
   },
   {
     "slug": "tiramisu",
@@ -150,7 +150,7 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 869
+    "baseWeightGrams": 1194
   },
   {
     "slug": "wortelcake-gember-speculaas",
@@ -159,6 +159,6 @@
     "tags": [
       "zoet"
     ],
-    "baseWeightGrams": 1502
+    "baseWeightGrams": 1592
   }
 ]

@@ -234,7 +234,9 @@ function downloadText(filename, text){
 }
 
 /* ---------- Scaling ---------- */
-const WEIGHT_UNITS = { g: 1, kg: 1000 };
+// Grams per unit for the total weight. Liquids are counted at ~water density
+// (1 ml ≈ 1 g), a standard cooking approximation, so soups/sauces add up too.
+const WEIGHT_UNITS = { g: 1, kg: 1000, ml: 1, l: 1000 };
 function computeBaseWeight(ingredients){
   let total = 0, hasWeight = false;
   ingredients.forEach(i => { if(WEIGHT_UNITS[i.unit]){ total += i.amount * WEIGHT_UNITS[i.unit]; hasWeight = true; } });
