@@ -152,11 +152,22 @@ h1,h2,h3{margin:0; font-family:var(--font);}
   border-top:1px solid var(--hairline-soft); border-bottom:1px solid var(--hairline-soft);
 }
 .ingredient-list li{
-  display:flex; justify-content:space-between; align-items:baseline;
+  display:flex; align-items:center; gap:10px;
   padding:12px 2px; font-size:16px; font-weight:400; line-height:1.5; color:var(--ink);
 }
 .ingredient-list li:not(:last-child){border-bottom:1px solid var(--hairline-soft);}
-.ingredient-amount{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap;}
+.ing-name{flex:1; min-width:0;}
+.ingredient-amount{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; flex-shrink:0;}
+.drag-handle{
+  flex-shrink:0; display:flex; align-items:center; color:var(--muted-soft);
+  cursor:grab; touch-action:none; padding:2px;
+}
+.drag-handle:active{cursor:grabbing;}
+.ing-check{
+  flex-shrink:0; width:20px; height:20px; margin:0; cursor:pointer; accent-color:var(--rausch);
+}
+.ingredient-item.checked .ing-name{text-decoration:line-through; color:var(--muted);}
+.ingredient-item.dragging{opacity:.6; background:var(--surface-soft);}
 
 /* ---- Steps: borderless, numbered, generous rhythm ---- */
 .step-list{list-style:none; margin:0; padding:0; counter-reset:step; display:flex; flex-direction:column; gap:var(--sp-lg);}

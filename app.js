@@ -304,6 +304,43 @@ function compressImage(file, maxWidth=1200, quality=0.82){
 }
 function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+/* ---------- Local (per-device) preferences ---------- */
+function lsGet(key){ try{ return JSON.parse(localStorage.getItem(key)); }catch(e){ return null; } }
+function lsSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+
+/* Touch-friendly drag reordering via a drag handle. onReorder gets the new
+   order of the items' data-id values after each drop. Uses pointer events so
+   it works on mobile as well as desktop. */
+function sortableList(listEl, onReorder){
+  listEl.querySelectorAll('.drag-handle').forEach(handle => {
+    handle.addEventListener('pointerdown', (e) => {
+      const li = handle.closest('[data-id]');
+      if(!li) return;
+      handle.setPointerCapture(e.pointerId);
+      li.classList.add('dragging');
+      const onMove = (ev) => {
+        const others = [...listEl.querySelectorAll('[data-id]:not(.dragging)')];
+        const after = others.find(item => {
+          const r = item.getBoundingClientRect();
+          return ev.clientY < r.top + r.height / 2;
+        });
+        if(after) listEl.insertBefore(li, after); else listEl.appendChild(li);
+      };
+      const onUp = () => {
+        li.classList.remove('dragging');
+        handle.removeEventListener('pointermove', onMove);
+        handle.removeEventListener('pointerup', onUp);
+        handle.removeEventListener('pointercancel', onUp);
+        onReorder([...listEl.querySelectorAll('[data-id]')].map(x => x.dataset.id));
+      };
+      handle.addEventListener('pointermove', onMove);
+      handle.addEventListener('pointerup', onUp);
+      handle.addEventListener('pointercancel', onUp);
+      e.preventDefault();
+    });
+  });
+}
+
 /* Placeholder shown when a recipe has no photo (or its photo fails to load):
    a neutral plate with a steaming bowl, drawn inline so no asset is needed. */
 const FALLBACK_IMG = 'data:image/svg+xml,' + encodeURIComponent(
@@ -545,21 +582,49 @@ async function renderDetail(slug){
   }
 
   const weightInput = document.getElementById('weightInput');
-  weightInput.value = baseWeight;
+  const ORDER_KEY = `kk:order:${slug}`;    // saved drag order (per recipe)
+  const AMOUNT_KEY = `kk:amount:${slug}`;   // last-used total weight (per recipe)
+  const checkedIds = new Set();             // ticked ingredients (this session)
+
+  const savedAmount = lsGet(AMOUNT_KEY);
+  weightInput.value = (typeof savedAmount === 'number' && savedAmount > 0) ? savedAmount : baseWeight;
+
+  // Order the ingredients by the user's saved drag order, if any.
+  function orderedIngredients(){
+    const saved = lsGet(ORDER_KEY);
+    if(!Array.isArray(saved)) return recipe.ingredients.slice();
+    const byId = {}; recipe.ingredients.forEach(i => { byId[i.id] = i; });
+    const out = [];
+    saved.forEach(id => { if(byId[id]){ out.push(byId[id]); delete byId[id]; } });
+    recipe.ingredients.forEach(i => { if(byId[i.id]) out.push(i); }); // newly added
+    return out;
+  }
+  const dragHandle = `<span class="drag-handle" aria-hidden="true"><svg width="10" height="16" viewBox="0 0 10 16"><g fill="currentColor"><circle cx="2.5" cy="3" r="1.3"/><circle cx="7.5" cy="3" r="1.3"/><circle cx="2.5" cy="8" r="1.3"/><circle cx="7.5" cy="8" r="1.3"/><circle cx="2.5" cy="13" r="1.3"/><circle cx="7.5" cy="13" r="1.3"/></g></svg></span>`;
 
   function draw(){
     const target = Number(weightInput.value) || baseWeight;
     const factor = target / baseWeight;
-    const scaled = scaleIngredients(recipe.ingredients, factor);
-    const byId = {}; scaled.forEach(i => byId[i.id] = i);
+    const byId = {}; scaleIngredients(recipe.ingredients, factor).forEach(i => { byId[i.id] = i; });
 
     const ul = document.getElementById('ingredientList');
     ul.innerHTML = '';
-    scaled.forEach(i => {
+    orderedIngredients().forEach(base => {
+      const i = byId[base.id];
       const li = document.createElement('li');
-      li.innerHTML = `<span>${escapeHtml(i.name)}</span><span class="ingredient-amount">${amountText(i.amount, i.unit)}</span>`;
+      li.className = 'ingredient-item' + (checkedIds.has(i.id) ? ' checked' : '');
+      li.dataset.id = i.id;
+      li.innerHTML = dragHandle +
+        `<input type="checkbox" class="ing-check"${checkedIds.has(i.id) ? ' checked' : ''} aria-label="Afvinken">` +
+        `<span class="ing-name">${escapeHtml(i.name)}</span>` +
+        `<span class="ingredient-amount">${amountText(i.amount, i.unit)}</span>`;
+      const cb = li.querySelector('.ing-check');
+      cb.addEventListener('change', () => {
+        if(cb.checked) checkedIds.add(i.id); else checkedIds.delete(i.id);
+        li.classList.toggle('checked', cb.checked);
+      });
       ul.appendChild(li);
     });
+    sortableList(ul, (ids) => lsSet(ORDER_KEY, ids));
 
     const ol = document.getElementById('stepList');
     ol.innerHTML = '';
@@ -572,16 +637,22 @@ async function renderDetail(slug){
       ol.appendChild(li);
     });
   }
+  // Remember the chosen total weight per recipe.
+  function applyWeight(){ lsSet(AMOUNT_KEY, Number(weightInput.value) || baseWeight); draw(); }
   draw();
-  weightInput.addEventListener('input', draw);
+  weightInput.addEventListener('input', applyWeight);
   appEl.querySelectorAll('.scale-step').forEach(btn => {
     btn.addEventListener('click', () => {
       const dir = Number(btn.dataset.dir);
       weightInput.value = Math.max(1, (Number(weightInput.value)||baseWeight) + dir*50);
-      draw();
+      applyWeight();
     });
   });
-  document.getElementById('resetScaleBtn').addEventListener('click', () => { weightInput.value = baseWeight; draw(); });
+  document.getElementById('resetScaleBtn').addEventListener('click', () => {
+    localStorage.removeItem(AMOUNT_KEY);   // back to the recipe's original weight
+    weightInput.value = baseWeight;
+    draw();
+  });
   const editBtn = document.getElementById('editBtn');
   editBtn.hidden = !canEdit();
   editBtn.addEventListener('click', () => { location.hash = `#/edit/${encodeURIComponent(slug)}`; });
