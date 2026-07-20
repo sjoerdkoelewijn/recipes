@@ -26,7 +26,7 @@
       "unit": "g"
     },
     {
-      "name": "Melkpoeder",
+      "name": "Melkpoeder (Nestlé)",
       "id": "melkpoeder",
       "amount": 100,
       "unit": "g"
