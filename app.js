@@ -306,6 +306,14 @@ function compressImage(file, maxWidth=1200, quality=0.82){
 function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 /* ---------- Local (per-device) preferences ---------- */
+/* Turn network failures into something readable ("Failed to fetch" otherwise). */
+function friendlyError(err){
+  const msg = (err && err.message) || String(err);
+  if(!navigator.onLine || /failed to fetch|networkerror|load failed/i.test(msg)){
+    return 'Geen verbinding. Recepten die je eerder hebt bekeken blijven beschikbaar.';
+  }
+  return msg;
+}
 function lsGet(key){ try{ return JSON.parse(localStorage.getItem(key)); }catch(e){ return null; } }
 function lsSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
 
@@ -511,7 +519,7 @@ async function renderList(){
     const idx = await getIndex();
     entries = idx.entries;
   }catch(e){
-    loading.textContent = 'Kon recepten niet laden: ' + e.message;
+    loading.textContent = friendlyError(e);
     return;
   }
   loading.hidden = true;
@@ -559,6 +567,11 @@ async function renderList(){
       : 'Geen recepten gevonden.';
   }
   apply();
+  // Ask the service worker to stock up for offline use (all recipe text, then
+  // photos) once the list is up and we have a connection.
+  if(navigator.onLine && navigator.serviceWorker && navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage({ type: 'cache-all' });
+  }
   // The search input lives in the persistent top bar; property assignment
   // (re)binds without stacking duplicate handlers across re-renders.
   searchInput.oninput = apply;
@@ -572,7 +585,7 @@ async function renderDetail(slug){
   appEl.innerHTML = '<p class="empty">Laden…</p>';
   let file;
   try{ file = await gh.getFile(`recipes/${slug}.md`); }
-  catch(e){ appEl.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`; return; }
+  catch(e){ appEl.innerHTML = `<p class="empty">${escapeHtml(friendlyError(e))}</p>`; return; }
   if(!file){ appEl.innerHTML = '<p class="empty">Recept niet gevonden.</p>'; return; }
 
   const recipe = parseRecipe(file.text);
