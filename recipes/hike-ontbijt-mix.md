@@ -20,7 +20,7 @@
       "unit": "g"
     },
     {
-      "name": "Havermout (fijn gemalen tot poeder)",
+      "name": "Havermout (fijn gemalen)",
       "id": "havermout",
       "amount": 100,
       "unit": "g"
