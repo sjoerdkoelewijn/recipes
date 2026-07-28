@@ -312,6 +312,12 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 }
 .install-banner:active{background:var(--rausch-active);}
 
+/* ---- Offline notice ---- */
+.offline-bar{
+  background:var(--ink); color:#fff;
+  font-size:13px; font-weight:500; padding:8px var(--sp-base); text-align:center;
+}
+
 /* ---- Toast (e.g. "Link gekopieerd") ---- */
 .toast{
   position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(10px);

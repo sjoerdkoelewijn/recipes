@@ -39,10 +39,11 @@ const gh = {
   },
   async getFile(path){
     const c = repoCfg();
-    // Cache-bust (unique query + no-store) so a freshly added or edited recipe
-    // shows up immediately instead of a stale browser/CDN copy of index.json.
-    const url = `${this.apiBase()}/contents/${path}?ref=${c.branch||'main'}&t=${Date.now()}`;
-    const res = await fetch(url, { headers: this.headers(false), cache: 'no-store' });
+    // Stable URL + no 'no-store' (which would stop the service worker from
+    // storing the response): the SW serves these network-first, so we still
+    // get fresh data online and a cached copy when offline.
+    const url = `${this.apiBase()}/contents/${path}?ref=${c.branch||'main'}`;
+    const res = await fetch(url, { headers: this.headers(false), cache: 'no-cache' });
     if(res.status === 404) return null;
     if(!res.ok) throw new Error(`GitHub read failed (${res.status})`);
     const data = await res.json();
@@ -428,6 +429,13 @@ installBanner.addEventListener('click', async () => {
   }
 });
 window.addEventListener('appinstalled', () => { installBanner.hidden = true; });
+
+/* ---- Offline notice: recipes you've opened before stay readable ---- */
+const offlineBar = document.getElementById('offlineBar');
+function updateOnlineStatus(){ offlineBar.hidden = navigator.onLine; }
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
 
 /* ---- Top-bar search: icon expands the input across the bar ---- */
 function openSearch(){
@@ -933,6 +941,9 @@ render();
 
 /* ---------- PWA install (optional, no-op if unsupported) ---------- */
 if('serviceWorker' in navigator){
-  // Intentionally no service worker registered: keeps this app simple and
-  // always fetches the latest recipe data instead of caching it.
+  // Caches the app shell plus recipes/photos you've viewed, so the app keeps
+  // working offline. Online it still fetches fresh data (network-first).
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
 }
