@@ -306,6 +306,16 @@ function compressImage(file, maxWidth=1200, quality=0.82){
 function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 /* ---------- Local (per-device) preferences ---------- */
+/* Ask the service worker to stock up for offline use (all recipe text, then
+   photos). Waits for the worker to be ready, since on a first visit it isn't
+   controlling the page yet when the list finishes loading. */
+function requestFullCache(){
+  if(!navigator.onLine || !('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.ready
+    .then(reg => { if(reg.active) reg.active.postMessage({ type: 'cache-all' }); })
+    .catch(() => {});
+}
+
 /* Turn network failures into something readable ("Failed to fetch" otherwise). */
 function friendlyError(err){
   const msg = (err && err.message) || String(err);
@@ -567,11 +577,7 @@ async function renderList(){
       : 'Geen recepten gevonden.';
   }
   apply();
-  // Ask the service worker to stock up for offline use (all recipe text, then
-  // photos) once the list is up and we have a connection.
-  if(navigator.onLine && navigator.serviceWorker && navigator.serviceWorker.controller){
-    navigator.serviceWorker.controller.postMessage({ type: 'cache-all' });
-  }
+  requestFullCache();
   // The search input lives in the persistent top bar; property assignment
   // (re)binds without stacking duplicate handlers across re-renders.
   searchInput.oninput = apply;
