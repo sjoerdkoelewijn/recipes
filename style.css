@@ -160,8 +160,9 @@ h1,h2,h3{margin:0; font-family:var(--font);}
 .ingredient-amount{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; flex-shrink:0;}
 .drag-handle{
   flex-shrink:0; display:flex; align-items:center; color:var(--muted-soft);
-  cursor:grab; touch-action:none; padding:2px;
+  cursor:grab; touch-action:none; padding:8px 10px; margin:-8px -6px; user-select:none;
 }
+.drag-handle svg{pointer-events:none;}
 .drag-handle:active{cursor:grabbing;}
 .ing-check{
   flex-shrink:0; width:20px; height:20px; margin:0; cursor:pointer; accent-color:var(--rausch);

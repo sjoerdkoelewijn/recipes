@@ -316,27 +316,28 @@ function sortableList(listEl, onReorder){
     handle.addEventListener('pointerdown', (e) => {
       const li = handle.closest('[data-id]');
       if(!li) return;
-      handle.setPointerCapture(e.pointerId);
+      e.preventDefault();
       li.classList.add('dragging');
+      // Listen on document so we keep getting moves wherever the finger goes.
       const onMove = (ev) => {
         const others = [...listEl.querySelectorAll('[data-id]:not(.dragging)')];
-        const after = others.find(item => {
+        let placed = false;
+        for(const item of others){
           const r = item.getBoundingClientRect();
-          return ev.clientY < r.top + r.height / 2;
-        });
-        if(after) listEl.insertBefore(li, after); else listEl.appendChild(li);
+          if(ev.clientY < r.top + r.height / 2){ listEl.insertBefore(li, item); placed = true; break; }
+        }
+        if(!placed) listEl.appendChild(li);
       };
       const onUp = () => {
         li.classList.remove('dragging');
-        handle.removeEventListener('pointermove', onMove);
-        handle.removeEventListener('pointerup', onUp);
-        handle.removeEventListener('pointercancel', onUp);
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onUp);
         onReorder([...listEl.querySelectorAll('[data-id]')].map(x => x.dataset.id));
       };
-      handle.addEventListener('pointermove', onMove);
-      handle.addEventListener('pointerup', onUp);
-      handle.addEventListener('pointercancel', onUp);
-      e.preventDefault();
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onUp);
     });
   });
 }
