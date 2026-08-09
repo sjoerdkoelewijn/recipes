@@ -1,6 +1,6 @@
 ---
 {
-  "title": "Cheesecake met Witte Chocolade en Blauwe Bessen",
+  "title": "Cheesecake met witte chocolade en blauwe bessen",
   "image": "images/cheesecake-met-witte-chocolade-en-blauwe-bessen.jpg",
   "tags": [
     "zoet"
