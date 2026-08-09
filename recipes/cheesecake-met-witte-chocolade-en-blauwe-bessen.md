@@ -78,3 +78,4 @@
 6. Was de {blauwe_bessen} en dep ze goed droog. Meng ze met de {poedersuiker} zodat ze licht bestoven zijn.
 7. Verdeel de blauwe bessen over de bovenkant van de taart en druk ze lichtjes aan zodat ze een beetje naar beneden zakken.
 8. Bak de cheesecake 45 minuten op 175°C. Laat volledig afkoelen voordat je de springvorm losmaakt.
+9. Je kan de helft van de blauwe bessen ook aan het einde vers als garnering op de taart doen (als die is afgekoeld)
