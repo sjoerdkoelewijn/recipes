@@ -1,5 +1,14 @@
 [
   {
+    "slug": "cheesecake-met-witte-chocolade-en-blauwe-bessen",
+    "title": "Cheesecake met Witte Chocolade en Blauwe Bessen",
+    "image": "images/cheesecake-met-witte-chocolade-en-blauwe-bessen.jpg",
+    "tags": [
+      "zoet"
+    ],
+    "baseWeightGrams": 1756
+  },
+  {
     "slug": "chocolademousse",
     "title": "Chocolademousse",
     "image": "images/chocolademousse.jpg",
