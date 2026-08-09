@@ -19,7 +19,7 @@
       "unit": "g"
     },
     {
-      "name": "Koekjes (naar smaak, bijv. digestive of speculaas)",
+      "name": "Koekjes (digestive)",
       "id": "koekjes",
       "amount": 200,
       "unit": "g"
