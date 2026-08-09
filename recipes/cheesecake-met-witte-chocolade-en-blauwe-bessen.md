@@ -19,7 +19,7 @@
       "unit": "g"
     },
     {
-      "name": "Koekjes (digestive)",
+      "name": "Koekjes (digestive of petit beurre)",
       "id": "koekjes",
       "amount": 200,
       "unit": "g"
