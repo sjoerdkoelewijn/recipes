@@ -65,6 +65,12 @@
       "id": "poedersuiker",
       "amount": 15,
       "unit": "g"
+    },
+    {
+      "name": "Bio citroen",
+      "id": "bio-citroen",
+      "amount": 1,
+      "unit": "pcs"
     }
   ]
 }
@@ -73,7 +79,7 @@
 1. Doe de {kwark} in een schone theedoek en laat het vocht eruit lopen (hangop). Dit duurt minstens 30 minuten, doe dit van tevoren.
 2. Verwarm de oven voor op 175°C (conventioneel, geen hetelucht).
 3. Verkruimel de {koekjes} in een blender of keukenmachine. Smelt de {boter} en mix die door de kruimels. Rasp een derde van de {chocolade} erdoor en verdeel het mengsel gelijkmatig over de bodem van een springvorm.
-4. Mix de uitgelekte {kwark}, {mascarpone}, {eieren}, {suiker} en {vanillesuiker} met een mixer tot een luchtig geheel. Rasp de resterende twee derde van de {chocolade} fijn en mix die erdoor.
+4. Mix de uitgelekte {kwark}, {mascarpone}, {eieren}, {suiker} en {vanillesuiker} met een mixer tot een luchtig geheel. Rasp de resterende twee derde van de {chocolade} fijn en mix die erdoor. Rasp de schil van de citroen en mix die erdoor. Je kan ook een beetje citroensap erdoor mixen, maar maak het niet te nat.
 5. Giet het mengsel over de koekjesbodem in de springvorm.
 6. Was de {blauwe_bessen} en dep ze goed droog. Meng ze met de {poedersuiker} zodat ze licht bestoven zijn.
 7. Verdeel de blauwe bessen over de bovenkant van de taart en druk ze lichtjes aan zodat ze een beetje naar beneden zakken.
