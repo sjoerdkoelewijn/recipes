@@ -29,7 +29,7 @@
     {
       "name": "Extra eierdooier",
       "id": "eigeel_blondie",
-      "amount": 1,
+      "amount": 2,
       "unit": "pcs"
     },
     {
@@ -151,22 +151,29 @@
       "id": "poedersuiker",
       "amount": 40,
       "unit": "g"
+    },
+    {
+      "name": "Kaneel",
+      "id": "kaneel",
+      "amount": 1,
+      "unit": "g"
     }
   ]
 }
 ---
 
-1. Verwarm de oven voor: 175°C (conventioneel) of 165°C (heteluchtoven). Bekleed een bakvorm van 33 x 23 cm met bakpapier.
-2. Maak de frangipane-vulling: klop de {boter_vulling} en {suiker_vulling} luchtig en romig.
-3. Mix de {eieren_vulling}, {vanille_vulling}, {amandelextract_vulling} en eventueel de {sinaasappelschil} erdoor.
-4. Spatel de {amandelmeel_vulling}, {havermeel_vulling} en het {zout_vulling} erdoorheen tot een dikke pasta ontstaat. Zet apart.
-5. Maak het blondie-beslag: klop de {boter_blondie} met de {suiker_blondie} tot een romige massa.
-6. Voeg de {eieren_blondie}, het {eigeel_blondie}, de {vanille_blondie} en het {amandelextract_blondie} toe. Mix tot een glad geheel.
-7. Spatel de {havermeel_blondie}, {bloemmix}, {amandelmeel_blondie}, het {bakpoeder} en het {zout_blondie} erdoorheen tot het net gemengd is. Voeg de {xanthaangom} toe als je bloemmix dit nog niet bevat.
-8. Verdeel twee derde van het blondiebeslag over de bodem van de bakvorm.
+1. Verwarm de oven voor: 175°C (conventioneel) of 165°C (heteluchtoven). Een pizza steen in de oven zorgt voor een beter gebakken blondie.
+2. Maak het blondie-beslag: klop de {boter_blondie} met de {suiker_blondie} tot een romige massa.
+3. Voeg de {eieren_blondie}, het {eigeel_blondie}, de {vanille_blondie} en het {amandelextract_blondie} toe. Mix tot een glad geheel.
+4. Spatel de {havermeel_blondie}, {bloemmix}, {amandelmeel_blondie}, het {bakpoeder} en het {zout_blondie} erdoorheen tot het net gemengd is. Voeg de {xanthaangom} toe als je bloemmix dit nog niet bevat.
+5. Maak de frangipane-vulling: klop de {boter_vulling} en {suiker_vulling} luchtig en romig.
+6. Mix de {eieren_vulling}, {vanille_vulling}, {amandelextract_vulling} en eventueel de {sinaasappelschil} erdoor.
+7. Spatel de {amandelmeel_vulling}, {havermeel_vulling} en het {zout_vulling} erdoorheen tot een dikke pasta ontstaat.
+8. Verdeel het blondiebeslag over de bodem van de bakvorm. (het hoeft niet helemaal glad te zijn).
 9. Strijk de volledige frangipane-vulling glad over het blondiebeslag.
-10. Verdeel het resterende derde van het blondiebeslag erboven (voorzichtig uitsmeren, het hoeft niet helemaal bedekt te zijn).
-11. Bestrooi met de {amandelschaafsel} en de {turbinadosuiker}.
-12. Bak 30 - 35 minuten. De randen moeten goudbruin en gezet zijn, het midden mag nog net iets zacht aanvoelen. Niet te lang bakken — een beetje smeuïgheid is juist goed.
-13. Laat volledig afkoelen in de bakvorm.
-14. Bestuif met de {poedersuiker} voordat je het in stukken snijdt.
+10. Mix het {eigeel_blondie} met de {turbinadosuiker} en daarna met het {amandelschaafsel} zodat het {amandelschaafsel} goed bedekt is met het {eigeel_blondie}. 
+
+Verdeel dit vervolgens over de bovenkant en druk het een beetje aan in de frangipane-vulling.
+11. Bak 30 - 35 minuten. De randen moeten goudbruin en gezet zijn, het midden mag nog net iets zacht aanvoelen. Niet te lang bakken, een beetje smeuïgheid is juist goed.
+12. Laat volledig afkoelen in de bakvorm.
+13. Mix de {poedersuiker} met de {kaneel} en bestuif de blondies voordat je ze in stukken snijdt.
