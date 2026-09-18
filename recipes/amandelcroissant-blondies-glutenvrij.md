@@ -29,7 +29,7 @@
     {
       "name": "Extra eierdooier",
       "id": "eigeel_blondie",
-      "amount": 2,
+      "amount": 1,
       "unit": "pcs"
     },
     {
@@ -157,6 +157,12 @@
       "id": "kaneel",
       "amount": 1,
       "unit": "g"
+    },
+    {
+      "name": "Eierdooier",
+      "id": "eierdooier",
+      "amount": 1,
+      "unit": "pcs"
     }
   ]
 }
@@ -171,9 +177,7 @@
 7. Spatel de {amandelmeel_vulling}, {havermeel_vulling} en het {zout_vulling} erdoorheen tot een dikke pasta ontstaat.
 8. Verdeel het blondiebeslag over de bodem van de bakvorm. (het hoeft niet helemaal glad te zijn).
 9. Strijk de volledige frangipane-vulling glad over het blondiebeslag.
-10. Mix het {eigeel_blondie} met de {turbinadosuiker} en daarna met het {amandelschaafsel} zodat het {amandelschaafsel} goed bedekt is met het {eigeel_blondie}. 
-
-Verdeel dit vervolgens over de bovenkant en druk het een beetje aan in de frangipane-vulling.
+10. Mix het {eigeel_blondie} met de {turbinadosuiker} en daarna met het {amandelschaafsel} zodat het {amandelschaafsel} goed bedekt is met het {eigeel_blondie}.
 11. Bak 30 - 35 minuten. De randen moeten goudbruin en gezet zijn, het midden mag nog net iets zacht aanvoelen. Niet te lang bakken, een beetje smeuïgheid is juist goed.
 12. Laat volledig afkoelen in de bakvorm.
 13. Mix de {poedersuiker} met de {kaneel} en bestuif de blondies voordat je ze in stukken snijdt.
