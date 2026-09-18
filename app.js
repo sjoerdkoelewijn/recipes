@@ -411,19 +411,75 @@ function showToast(message){
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
-/* ---- Share: copy the recipe's share-page link (carries its OG preview) ---- */
-shareBtn.addEventListener('click', async () => {
+/* ---- Share: a QR code for the recipe's share page, plus WhatsApp / copy ----
+   The share page (not the app hash URL) carries the OG preview, so that's the
+   link we hand out. */
+const shareModal = document.getElementById('shareModal');
+const shareQr = document.getElementById('shareQr');
+const shareWhatsappBtn = document.getElementById('shareWhatsappBtn');
+const shareCopyBtn = document.getElementById('shareCopyBtn');
+const shareModalClose = document.getElementById('shareModalClose');
+let shareUrl = '';
+let shareTitle = '';
+
+function currentShareUrl(){
   const m = location.hash.match(/^#\/r\/(.+)$/);
-  const url = m ? `${SITE_BASE}/r/${m[1]}.html` : location.href;
+  return m ? `${SITE_BASE}/r/${m[1]}.html` : location.href;
+}
+
+function drawShareQr(url){
+  shareQr.innerHTML = '';
+  let modules;
+  try{ modules = QR.matrix(url, 'M'); }
+  catch(e){ shareQr.textContent = 'QR-code lukt niet'; return; }
+  const quiet = 2;                       // quiet zone, in modules
+  const span = modules.length + quiet * 2;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${span} ${span}`);
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'QR-code naar dit recept');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('transform', `translate(${quiet} ${quiet})`);
+  path.setAttribute('d', QR.toSvgPath(modules));
+  svg.appendChild(path);
+  shareQr.appendChild(svg);
+}
+
+function openShareModal(){
+  shareUrl = currentShareUrl();
+  shareTitle = topTitleText.textContent || 'KoeleKook';
+  drawShareQr(shareUrl);
+  shareModal.hidden = false;
+  document.body.style.overflow = 'hidden';    // keep the page behind it still
+  shareWhatsappBtn.focus();
+}
+function closeShareModal(){
+  shareModal.hidden = true;
+  document.body.style.overflow = '';
+  shareBtn.focus();
+}
+
+shareBtn.addEventListener('click', openShareModal);
+shareModalClose.addEventListener('click', closeShareModal);
+shareModal.addEventListener('click', (e) => { if(e.target.hasAttribute('data-close-share')) closeShareModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && !shareModal.hidden) closeShareModal(); });
+
+shareWhatsappBtn.addEventListener('click', () => {
+  const text = `${shareTitle} — ${shareUrl}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+});
+
+shareCopyBtn.addEventListener('click', async () => {
   try{
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(shareUrl);
     showToast('Link gekopieerd');
+    closeShareModal();
   }catch(e){
     // Fallback for browsers without clipboard API / permission.
     const ta = document.createElement('textarea');
-    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    ta.value = shareUrl; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
-    try{ document.execCommand('copy'); showToast('Link gekopieerd'); }
+    try{ document.execCommand('copy'); showToast('Link gekopieerd'); closeShareModal(); }
     catch(_){ showToast('Kopiëren mislukt'); }
     ta.remove();
   }

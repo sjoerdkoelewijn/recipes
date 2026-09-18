@@ -1,12 +1,15 @@
 /* KoeleKook service worker — offline support.
-   Bump VERSION when the caching logic changes to drop old caches. */
-const VERSION = 'v3';
-const SHELL_CACHE = 'kk-shell-' + VERSION;
-const DATA_CACHE  = 'kk-data-'  + VERSION;
+   Bump SHELL_VERSION when the app's own files change, and DATA_VERSION only
+   when cached recipes must be thrown away — bumping it costs offline users
+   every recipe they had stored. */
+const SHELL_VERSION = 'v4';
+const DATA_VERSION  = 'v3';
+const SHELL_CACHE = 'kk-shell-' + SHELL_VERSION;
+const DATA_CACHE  = 'kk-data-'  + DATA_VERSION;
 
 /* Precached on install so the app works offline right after the first visit,
    before the worker has had a chance to see these requests go by. */
-const SHELL_ASSETS = ['index.html', 'app.js', 'style.css', 'logo.svg', 'favicon.svg', 'icon.svg', 'manifest.json'];
+const SHELL_ASSETS = ['index.html', 'app.js', 'qr.js', 'style.css', 'logo.svg', 'favicon.svg', 'icon.svg', 'manifest.json'];
 const RECIPE_INDEX = 'https://api.github.com/repos/sjoerdkoelewijn/recipes/contents/recipes/index.json?ref=main';
 
 self.addEventListener('install', (event) => {

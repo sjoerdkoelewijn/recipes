@@ -318,6 +318,34 @@ h1,h2,h3{margin:0; font-family:var(--font);}
   font-size:13px; font-weight:500; padding:8px var(--sp-base); text-align:center;
 }
 
+/* ---- Share modal (QR code + WhatsApp / copy) ---- */
+.modal{
+  position:fixed; inset:0; z-index:50;
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--sp-base);
+}
+.modal-backdrop{position:absolute; inset:0; background:rgba(0,0,0,0.45);}
+.modal-card{
+  position:relative; z-index:1;
+  width:100%; max-width:360px; max-height:calc(100vh - 32px); overflow-y:auto;
+  background:var(--canvas); border-radius:var(--r-lg); box-shadow:var(--shadow-1);
+  padding:var(--sp-lg) var(--sp-base) var(--sp-base);
+  display:flex; flex-direction:column; align-items:center; gap:var(--sp-md);
+  text-align:center;
+}
+.modal-close{position:absolute; top:6px; right:6px; color:var(--muted);}
+.modal-title{font-size:18px; font-weight:600;}
+.modal-hint{margin:0; font-size:14px; color:var(--muted); line-height:1.4;}
+.share-qr{
+  width:100%; max-width:240px; aspect-ratio:1;
+  padding:var(--sp-md); background:#fff;
+  border:1px solid var(--hairline); border-radius:var(--r-md);
+}
+.share-qr svg{display:block; width:100%; height:100%;}
+.share-qr path{fill:var(--ink);}
+.modal-actions{display:flex; flex-direction:column; gap:var(--sp-sm); width:100%;}
+.modal-actions button{width:100%;}
+
 /* ---- Toast (e.g. "Link gekopieerd") ---- */
 .toast{
   position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(10px);
