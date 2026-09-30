@@ -113,6 +113,6 @@
 4. Doe alle groenten in de kom samen met de {pecannoten} en hussel grondig door elkaar. Dit kan ook al van tevoren.
 5. Verdeel de groenten in één laag over de bakplaat. Let op: zorg dat er genoeg ruimte is, anders sudderen de groenten in hun eigen vocht en worden ze niet knapperig. Past alles er niet op? Gebruik dan twee bakplaten.
 
-Let op : doe de {pecannoten} alleen bij de groenten als je genoeg ruimte hebt op de bakplaat. Als je niet genoeg ruimte hebt rooster ze dan apart met een scheut van de {olijfolie} en een scheut van de {maple_syrup}, zodat ze lekker knapperig worden.
+Nog steeds te weinig ruimte? Rooster de {pecannoten} dan apart met wat olijfolie en wat van de {maple_syrup}
 6. Hussel de {gnocchi} apart door 30ml van de {olijfolie} en wat {zout} en verdeel ze over de groenten.
 7. Zet 30 minuten in de oven tot de groenten gaar zijn met geblakerde randjes en de gnocchi goudbruin en knapperig zijn.
