@@ -112,6 +112,7 @@
 3. Verdeel de {broccoli} in roosjes en snij de steel in plakjes. Snij de {paprika_rood} en {paprika_geel} in korte stevige reepjes, de {kerstomaatjes} doormidden en de {rode_ui} in niet te dunne halve ringen.
 4. Doe alle groenten in de kom samen met de {pecannoten} en hussel grondig door elkaar. Dit kan ook al van tevoren.
 5. Verdeel de groenten in één laag over de bakplaat. Let op: zorg dat er genoeg ruimte is, anders sudderen de groenten in hun eigen vocht en worden ze niet knapperig. Past alles er niet op? Gebruik dan twee bakplaten.
-6. Let op : doe de {pecannoten} alleen bij de toe bij de groenten als je genoeg ruimte hebt op de bakplaat. Als je niet genoeg ruimte hebt rooster ze dan apart met een scheut van de {olijfolie} en een scheut van de {maple_syrup}, zodat ze lekker knapperig worden.
-7. Hussel de {gnocchi} apart door 30ml van de {olijfolie} en wat {zout} en verdeel ze over de groenten.
-8. Zet 30 minuten in de oven tot de groenten gaar zijn met geblakerde randjes en de gnocchi goudbruin en knapperig zijn.
+
+Let op : doe de {pecannoten} alleen bij de groenten als je genoeg ruimte hebt op de bakplaat. Als je niet genoeg ruimte hebt rooster ze dan apart met een scheut van de {olijfolie} en een scheut van de {maple_syrup}, zodat ze lekker knapperig worden.
+6. Hussel de {gnocchi} apart door 30ml van de {olijfolie} en wat {zout} en verdeel ze over de groenten.
+7. Zet 30 minuten in de oven tot de groenten gaar zijn met geblakerde randjes en de gnocchi goudbruin en knapperig zijn.
