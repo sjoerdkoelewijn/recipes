@@ -110,7 +110,9 @@
 1. Verwarm de oven voor op 195°C hetelucht (of 220°C conventioneel). Bekleed een grote bakplaat met bakpapier.
 2. Meng in een grote kom 45ml van de {olijfolie} met 30ml van de {maple_syrup}, de uitgeperste {knoflook}, de losgeriste {tijm}, het {venkelzaad}, {zout}, {peper} en {chilivlokken}. Rasp de schil van de helft van de {sinaasappel} erboven fijn, pers hem dan uit en roer ook het sap erdoor.
 3. Verdeel de {broccoli} in roosjes en snij de steel in plakjes. Snij de {paprika_rood} en {paprika_geel} in korte stevige reepjes, de {kerstomaatjes} doormidden en de {rode_ui} in niet te dunne halve ringen.
-4. Doe alle groenten in de kom samen met de {pecannoten} en hussel goed door elkaar. Dit kan ook al van tevoren.
+4. Doe alle groenten in de kom samen met de {pecannoten} en hussel goed door elkaar.
+
+Je kan de {pecannoten} ook los van de groeten roosteren met wat olie en {maple_syrup}, dan worden ze lekker knapperig.
 5. Verdeel de groenten in één laag over de bakplaat. Let op: zorg dat er genoeg ruimte is, anders sudderen de groenten in hun eigen vocht en worden ze niet knapperig. Past alles er niet op? Gebruik dan twee bakplaten.
 6. Hussel de {gnocchi} apart door 30ml van de {olijfolie} en wat {zout} en verdeel ze over de groenten.
 7. Zet 30 minuten in de oven tot de groenten gaar zijn met geblakerde randjes en de gnocchi goudbruin en knapperig zijn.
