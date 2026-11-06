@@ -143,17 +143,6 @@
     "baseWeightGrams": 1322
   },
   {
-    "slug": "scarpaccio",
-    "title": "Scarpaccio",
-    "image": "images/scarpaccio.jpg",
-    "tags": [
-      "hartig",
-      "fodmap",
-      "vega"
-    ],
-    "baseWeightGrams": 1313
-  },
-  {
     "slug": "spaghetti-aglio-e-olio",
     "title": "Spaghetti Aglio e Olio",
     "image": "images/spaghetti-aglio-e-olio.jpg",
