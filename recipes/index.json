@@ -125,6 +125,15 @@
     "baseWeightGrams": 1456
   },
   {
+    "slug": "quiche-met-aardappel-broccoli-en-gerookte-raclette",
+    "title": "Quiche met Aardappel, Broccoli en Gerookte Raclette",
+    "image": "images/quiche-met-aardappel-broccoli-en-gerookte-raclette.jpg",
+    "tags": [
+      "hartig"
+    ],
+    "baseWeightGrams": 1222
+  },
+  {
     "slug": "quiche-zalm-dille",
     "title": "Quiche met Gerookte Zalm en Dille",
     "image": "images/quiche-zalm-dille.jpg",
