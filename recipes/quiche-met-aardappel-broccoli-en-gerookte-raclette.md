@@ -97,7 +97,7 @@
 1. Verwarm de heteluchtoven voor op 180°C.
 2. Schil de {aardappels} en snijd ze in kleine stukjes. Meng ze met de {olijfolie} en het {zout_aardappels}. Leg ze op een bakplaat in de oven tot ze mooi bruin zijn.
 3. Kook de {broccoli} en {bloemkool} uit de diepvries even tot ze net niet gaar zijn. Laat uitlekken en snijd in kleine stukjes.
-4. Doe de {creme_fraiche} en de {eieren} in een kom (ongeveer gelijke delen). Voeg de geperste {knoflook}, {peper} en {zout_mix} toe en meng goed.
+4. Doe de {creme_fraiche} en de {eieren} in een kom (ongeveer gelijke delen). Voeg de geperste {knoflook}, {peper}, {nootmuskaat} en {zout_mix} toe en meng goed.
 5. Haal de aardappels uit de oven als ze mooi bruin zijn.
 6. Leg de {deeg} in een bakvorm en knip het overtollige bakpapier weg. Verdeel de aardappelstukjes over de bodem.
 7. Verdeel de broccoli en bloemkool over de aardappels. Strooi de {spekjes} erover en leg de plakjes {raclette} erbovenop.
