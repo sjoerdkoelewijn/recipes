@@ -1,6 +1,6 @@
 ---
 {
-  "title": "Quiche met Aardappel, Broccoli en Gerookte Raclette",
+  "title": "Quiche met aardappel, broccoli, bloemkool gerookte raclette en spekjes",
   "image": "images/quiche-met-aardappel-broccoli-en-gerookte-raclette.jpg",
   "tags": [
     "hartig"
@@ -82,6 +82,12 @@
       "name": "Gerookte raclettekaas, in plakjes",
       "id": "raclette",
       "amount": 150,
+      "unit": "g"
+    },
+    {
+      "name": "Nootmuskaat",
+      "id": "nootmuskaat",
+      "amount": 1,
       "unit": "g"
     }
   ]
