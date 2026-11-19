@@ -84,3 +84,4 @@
 6. Verhit de {olie} in een grote pan tot ±180°C.
 7. Schep met een natte lepel bolletjes beslag in de olie en bak ze ±8 minuten. Niet te lang bakken, anders worden ze taai.
 8. Laat de oliebollen uitlekken op keukenpapier en bestrooi met poedersuiker voor het serveren.
+9. Bier voor gist
