@@ -1,5 +1,12 @@
 [
   {
+    "slug": "banoffee-pie",
+    "title": "Banoffee Pie",
+    "image": "images/banoffee-pie.jpg",
+    "tags": [],
+    "baseWeightGrams": 1048
+  },
+  {
     "slug": "cheesecake-met-witte-chocolade-en-blauwe-bessen",
     "title": "Cheesecake met witte chocolade en blauwe bessen",
     "image": "images/cheesecake-met-witte-chocolade-en-blauwe-bessen.jpg",
